@@ -1,1 +1,1 @@
-function devLoc_singTool() {}
+
