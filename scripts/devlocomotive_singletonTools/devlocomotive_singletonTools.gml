@@ -124,9 +124,9 @@ function snCleaner() {
     	if variable_struct_exists(run, "run")
     		run.run();
     	else {
-    		if !variable_struct_exists(val.struct, val.name) throw ("\n\tthere is no value in the group <" + val.name + ">\n\n");
-        	var get = variable_struct_get(val.struct, val.name);
-        	if !is_undefined(get) with val get();
+    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tthere is no key " + run.name + " in the group\n\n");
+        	var get = variable_struct_get(run.struct, run.name);
+        	if !is_undefined(get) with run get();
     	}
     }
     stack = undefined;
