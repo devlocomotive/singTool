@@ -36,7 +36,7 @@ function snGroup() {
 		var key = argument[0];
 		if !is_string(key) or (key == "") throw "\n\tthe key must be a string and contain at least one character\n\n";
 	}
-    if variable_struct_exists(self, key) throw "key is busy";
+    if variable_struct_exists(self, key) throw "\n\tkey is busy\n\n";
     var news = new constr();
     if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_accs_") {
     	var defs_loc = self.__devlocomotive_singletonTools_snHide_accs_.defs;
@@ -49,7 +49,8 @@ function snGroup() {
 	    	variable_struct_set(defs_new, key, val);
     	}
     	news.__devlocomotive_singletonTools_snHide_accs_ = 
-    		{ root : self.__devlocomotive_singletonTools_snHide_accs_.root
+    		{ prev : self
+    		, root : self.__devlocomotive_singletonTools_snHide_accs_.root
     		, hook : (argument_count > 1 ? argument[1] : false) ? news : self.__devlocomotive_singletonTools_snHide_accs_.hook
     		, defs : defs_new
     		}
@@ -80,8 +81,7 @@ function snRunner() {
 				method(val, recursion)(recursion);
 		}
 	});
-	var runner = argument[0];
-var cleaner = argument_count > 1 ? argument[1] : undefined;
+	var cleaner = argument_count > 1 ? argument[1] : undefined;
     if is_method(cleaner) {
     	var group = snGroup();
     	group.__devlocomotive_singletonTools_snHide_auto_ = undefined;
@@ -96,11 +96,12 @@ var cleaner = argument_count > 1 ? argument[1] : undefined;
     }
     struct = snGroup();
 	struct.__devlocomotive_singletonTools_snHide_accs_ =
-		{ root : struct
+		{ prev : undefined
+		, root : struct
 		, hook : struct
 		, defs : {}
 		}
-	method(struct, runner)();
+	method(struct, argument[0])();
 	method(struct, snAccessClear)(snAccessClear);
     return struct;
 }
@@ -110,21 +111,20 @@ var cleaner = argument_count > 1 ? argument[1] : undefined;
 function snCleaner() {
     static stack = [];
     if argument_count {
-    	var push = argument[0];
-    	if is_snGroup(push) and variable_struct_exists(push, "__devlocomotive_singletonTools_snHide_auto_") {
-    		variable_struct_remove(push, "__devlocomotive_singletonTools_snHide_auto_");
-    		array_push(stack, push);
+    	if is_snGroup(argument[0]) and variable_struct_exists(argument[0], "__devlocomotive_singletonTools_snHide_auto_") {
+    		variable_struct_remove(argument[0], "__devlocomotive_singletonTools_snHide_auto_");
+    		array_push(stack, argument[0]);
     		exit;
     	}
     }
-    if is_undefined(stack) throw "\n\tthe application is assumed to be complete. (you may have accidentally used <snCleaner> with no arguments)\n\n";
+    if is_undefined(stack) throw "\n\tthe application is assumed to be complete\n\n";
     var i = 0, run;
     repeat array_length(stack) {
     	run = stack[i++];
     	if variable_struct_exists(run, "run")
     		run.run();
     	else {
-    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tthere is no key " + run.name + " in the group\n\n");
+    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tthere is no key <" + run.name + "> in the group\n\n");
         	var get = variable_struct_get(run.struct, run.name);
         	if !is_undefined(get) with run get();
     	}
@@ -132,22 +132,35 @@ function snCleaner() {
     stack = undefined;
 }
 
-/// @function snAutoAccess([-1#previous;1#hook;default#root]);
+/// @function snAutoAccess([-1#previous;1#hook;default#root], [<previous>-level]);
 /// @description
 /// @param [-1#previous;1#hook;0|default#root] {number/string}
+/// @param [<previous>-level]				   {count}
 function snAutoAccess() {
+	static getPrevious = method_get_index(function(count) {
+		if (count >= 1) {
+			var root = self.__devlocomotive_singletonTools_snHide_accs_.prev;
+			repeat (count - 1) {
+				if is_undefined(root) throw "\n\tcannot rise higher than the root group\n\n";
+				root = root.__devlocomotive_singletonTools_snHide_accs_.prev;
+			}
+			return root;
+		}
+		return self;
+	});
 	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_accs_") 
 		throw "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) {
 			if (argument[0] != "") {
-				var char = string_char_at(argument[0], 1);
-				if (char == "p") return other;
-				if (char == "h") return self.__devlocomotive_singletonTools_snHide_accs_.hook;
+				argument[0] = string_char_at(argument[0], 1);
+				if (argument[0] == "p") return getPrevious(argument_count > 1 ? argument[1] : 1);
+				if (argument[0] == "h") return self.__devlocomotive_singletonTools_snHide_accs_.hook;
 			}
 			return self.__devlocomotive_singletonTools_snHide_accs_.root;
 		} else if is_numeric(argument[0]) {
-		    if (argument[0] == -1) return other;
+			argument[0] = sign(argument[0]);
+		    if (argument[0] == -1) return getPrevious(argument_count > 1 ? argument[1] : 1);
 		    if (argument[0] == 1)  return self.__devlocomotive_singletonTools_snHide_accs_.hook;
 		}
 	}
@@ -165,8 +178,10 @@ function snDefault() {
 	if (argument_count > 1)
 		variable_struct_set(self.__devlocomotive_singletonTools_snHide_accs_.defs, argument[0], argument[1]);
 	else {
-		var defs = self.__devlocomotive_singletonTools_snHide_accs_.defs;
-		if variable_struct_exists(defs, argument[0]) variable_struct_remove(defs, argument[0]);
+		if (argument_count > 0) {
+			var defs = self.__devlocomotive_singletonTools_snHide_accs_.defs;
+			if variable_struct_exists(defs, argument[0]) variable_struct_remove(defs, argument[0]);
+		} else self.__devlocomotive_singletonTools_snHide_accs_.defs = {};
 	}
 }
 
