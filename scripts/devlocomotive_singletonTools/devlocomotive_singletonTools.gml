@@ -40,7 +40,7 @@ function snGroup() {
     var news = new constr();
     if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_accs_") {
     	var defs_loc = self.__devlocomotive_singletonTools_snHide_accs_.defs;
-    	var names = variable_struct_get_names(inhr_loc), i = 0, defs_new = {}, key, val;
+    	var names = variable_struct_get_names(defs_loc), i = 0, defs_new = {}, key, val;
     	repeat array_length(names) {
     		key = names[i++];
     		if (string_pos("__devlocomotive_singletonTools_snHide_", key) == 1) continue;
