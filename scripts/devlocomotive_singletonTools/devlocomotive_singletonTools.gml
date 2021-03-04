@@ -185,34 +185,6 @@ function snDefault() {
 	}
 }
 
-/// @function snRebindGroup(group, rebind, [exception]);
-/// @description
-/// @param group     {snGroup}
-/// @param rebind    {struct/instance}
-/// @param exception {[string]}
-function snRebindGroup() {
-	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_accs_") 
-		throw "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
-	var exception = argument_count > 2 ? 
-		(is_array(argument[2]) ? argument[2] : [argument[2]])
-		: [];
-	if !is_snGroup(argument[0]) throw "\n\tyou must specify a group\n\n";
-	var names = variable_struct_get_names(argument[0]), i = 0, key, val, j;
-	repeat array_length(names) {
-		key = names[i++];
-		val = variable_struct_get(argument[0], key);
-		if is_method(val) and (method_get_self(val) == argument[0]) {
-			j = 0;
-			repeat array_length(exception) if (exception[j++] == key) {
-				j = -1;
-				break;
-			}
-			if (j == -1) continue;
-			variable_struct_set(argument[0], key, method(argument[1], val));
-		}
-	}
-}
-
 /* replacer
 	__devlocomotive_singletonTools_snHide_:
 		__devlocomotive_singletonTools_snHide_auto_
