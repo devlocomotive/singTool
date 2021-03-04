@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "singTool",
-    "path": "singTool.yyp",
+    "name": "test",
+    "path": "folders/test.yy",
   },
   "resourceVersion": "1.0",
-  "name": "devLoc_singTool",
+  "name": "tester",
   "tags": [],
   "resourceType": "GMScript",
 }

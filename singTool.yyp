@@ -1,6 +1,12 @@
 {
   "resources": [
-    {"id":{"name":"devLoc_singTool","path":"scripts/devLoc_singTool/devLoc_singTool.yy",},"order":3,},
+    {"id":{"name":"__GMA_SETTINGS__","path":"scripts/__GMA_SETTINGS__/__GMA_SETTINGS__.yy",},"order":1,},
+    {"id":{"name":"GMAssert","path":"extensions/GMAssert/GMAssert.yy",},"order":0,},
+    {"id":{"name":"init","path":"rooms/init/init.yy",},"order":0,},
+    {"id":{"name":"extension_devlocomotive_singletonTools","path":"extensions/extension_devlocomotive_singletonTools/extension_devlocomotive_singletonTools.yy",},"order":1,},
+    {"id":{"name":"tester","path":"scripts/tester/tester.yy",},"order":2,},
+    {"id":{"name":"__GMA_BREAKPOINT__","path":"scripts/__GMA_BREAKPOINT__/__GMA_BREAKPOINT__.yy",},"order":0,},
+    {"id":{"name":"devlocomotive_singletonTools","path":"scripts/devlocomotive_singletonTools/devlocomotive_singletonTools.yy",},"order":0,},
   ],
   "Options": [
     {"name":"Linux","path":"options/linux/options_linux.yy",},
@@ -15,8 +21,18 @@
     "name": "Default",
     "children": [],
   },
-  "RoomOrderNodes": [],
-  "Folders": [],
+  "RoomOrderNodes": [
+    {"roomId":{"name":"init","path":"rooms/init/init.yy",},},
+  ],
+  "Folders": [
+    {"folderPath":"folders/devlocomotive_singletonTools.yy","order":0,"resourceVersion":"1.0","name":"devlocomotive_singletonTools","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/test.yy","order":1,"resourceVersion":"1.0","name":"test","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/test/GMAssert-2-2-0/Libraries.yy","order":0,"resourceVersion":"1.0","name":"Libraries","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/test/GMAssert-2-2-0/Libraries/GMAssert.yy","order":1,"resourceVersion":"1.0","name":"GMAssert","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/test/GMAssert-2-2-0/Libraries_config.yy","order":1,"resourceVersion":"1.0","name":"Libraries_config","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/test/GMAssert-2-2-0/Libraries_config/GMAssert.yy","order":1,"resourceVersion":"1.0","name":"GMAssert","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/test/GMAssert-2-2-0.yy","order":1,"resourceVersion":"1.0","name":"GMAssert-2-2-0","tags":[],"resourceType":"GMFolder",},
+  ],
   "AudioGroups": [
     {"targets":-1,"resourceVersion":"1.3","name":"audiogroup_default","resourceType":"GMAudioGroup",},
   ],
