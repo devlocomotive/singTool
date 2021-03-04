@@ -1,7 +1,7 @@
 
 /* info
     name            \\ singletonTools
-    version         \\ 100 (from )
+    version         \\ 100 (from 04.03.21)
     autor           \\ devlocomotive
     data            \\ 02.03.21
 */
@@ -25,42 +25,39 @@
 /// @param [key]           {string}
 /// @param [<runner>-hook] {bool}
 function snGroup() {
-	static counterId = method_get_index(function() {
-		static counter = -1073741824;
-		return string(counter++);
-	});
-    static constr = method_get_index(function(id) constructor {
-    	self.snGroupId = id;
-        static toString = function() {
-            return "snGroup " + snGroupId;
-        }
+    static constr = method_get_index(function() constructor {
+    	static toString = function() {
+    		return "<snGroup>";
+    	}
     });
 	if (argument_count == 0)
-		return new constr(counterId());
+		return new constr();
 	else {
 		var key = argument[0];
 		if !is_string(key) or (key == "") throw "\n\tthe key must be a string and contain at least one character\n\n";
 	}
-    if is_struct(self) and variable_struct_exists(self, key) return variable_struct_get(self, key);
-    var news = new constr(counterId());
-    if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_prev_") {
-        news.__devlocomotive_singletonTools_snHide_prev_ = self;
-    	news.__devlocomotive_singletonTools_snHide_root_ = self.__devlocomotive_singletonTools_snHide_root_;
-		news.__devlocomotive_singletonTools_snHide_hook_ = (argument_count > 1 ? argument[1] : false) ? news : self.__devlocomotive_singletonTools_snHide_hook_;
+    if is_struct(self) and variable_struct_exists(self, key) {
+    	var type = variable_struct_get(self, key);
+    	if is_snGroup(type) return type;
+    	throw "\n\tthe key is busy with the wrong types\n\n";
+    }
+    var news = new constr();
+    if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_inhr_") {
+    	var names = variable_struct_get_names(self.__devlocomotive_singletonTools_snHide_inhr_), i = 0, inhr = {}, key;
+    	repeat array_length(names) {
+    		key = names[i++];
+    		if (string_pos("__devlocomotive_singletonTools_snHide_", key) == 1) or (key == "") continue;
+    		variable_struct_set(news, key, variable_struct_get(self, key));
+    		variable_struct_set(inhr, key, undefined);
+    	}
+    	news.__devlocomotive_singletonTools_snHide_inhr_ = inhr;
+    	news.__devlocomotive_singletonTools_snHide_accs_ = 
+    		{ root : self.__devlocomotive_singletonTools_snHide_accs_.root
+    		, hook : (argument_count > 1 ? argument[1] : false) ? news : self.__devlocomotive_singletonTools_snHide_accs_.hook
+    		}
     }
     variable_struct_set(self, key, news);
     return news;
-}
-
-/// @function snGroupDisableAutoAccess(key);
-/// @description
-/// @param key {string}
-function snGroupDisableAutoAccess() {
-	if !is_string(argument0) or (argument0 == "") throw "\n\tthe key must be a string and contain at least one character\n\n";
-	if is_struct(self) and variable_struct_exists(self, argument0) return variable_struct_get(self, argument0);
-	var group = snGroup();
-	variable_struct_set(self, argument0, group);
-	return group;
 }
 
 /// @function is_snGroup(group);
@@ -71,28 +68,23 @@ function is_snGroup() {
     return is_struct(argument0) and (instanceof(argument0) == instance);
 }
 
-/// @function snRunner(autoAccess, runner, [cleaner]);
+/// @function snRunner(runner, [cleaner]);
 /// @description
-/// @param autoAccess {bool}
-/// @param runner     {method}
-/// @param cleaner    {method/string}
+/// @param runner  {method}
+/// @param cleaner {method/string}
 function snRunner() {
-	static snAccessClear = method_get_index(function(marker, recursion) {
-		variable_struct_set(marker, self.snGroupId, undefined);
-		if variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_prev_") {
-			variable_struct_remove(self, "__devlocomotive_singletonTools_snHide_prev_");
-			variable_struct_remove(self, "__devlocomotive_singletonTools_snHide_root_");
-			variable_struct_remove(self, "__devlocomotive_singletonTools_snHide_hook_");
-			var i = 0, names = variable_struct_get_names(self), val;
-			repeat array_length(names) {
-				val = variable_struct_get(self, names[i++]);
-				if is_snGroup(val) and !variable_struct_exists(marker, val.snGroupId)
-					method(val, recursion)(marker, recursion);
-			}
+	static snAccessClear = method_get_index(function(recursion) {
+		variable_struct_remove(self, "__devlocomotive_singletonTools_snHide_inhr_");
+		variable_struct_remove(self, "__devlocomotive_singletonTools_snHide_accs_");
+		var i = 0, names = variable_struct_get_names(self), val;
+		repeat array_length(names) {
+			val = variable_struct_get(self, names[i++]);
+			if is_snGroup(val) and variable_struct_exists(val, "__devlocomotive_singletonTools_snHide_inhr_")
+				method(val, recursion)(recursion);
 		}
 	});
-	var access = argument0, runner = argument1;
-	var cleaner = argument_count > 0 ? argument[0] : undefined;
+	var runner = argument[0];
+var cleaner = argument_count > 1 ? argument[1] : undefined;
     if is_method(cleaner)
         snCleaner(method(struct, cleaner));
     else if is_string(cleaner) {
@@ -102,15 +94,14 @@ function snRunner() {
         group.name = cleaner;
         snCleaner(group);
     }
-    if !access
-    	method(struct, runner)(struct);
-    else {
-    	struct.__devlocomotive_singletonTools_snHide_prev_ = struct;
-		struct.__devlocomotive_singletonTools_snHide_root_ = struct;
-		struct.__devlocomotive_singletonTools_snHide_hook_ = struct;
-		method(struct, runner)(struct);
-		method(struct, snAccessClear)({}, snAccessClear);
-    }
+    struct = snGroup();
+	struct.__devlocomotive_singletonTools_snHide_inhr_ = {};
+	struct.__devlocomotive_singletonTools_snHide_accs_ =
+		{ root : struct
+		, hook : struct
+		}
+	method(struct, runner)();
+	method(struct, snAccessClear)(snAccessClear);
     return struct;
 }
 
@@ -125,6 +116,7 @@ function snCleaner() {
         repeat array_length(stack) {
             val = stack[i++];
             if is_struct(val) {
+            	if !variable_struct_exists(val.struct, val.name) throw ("\n\tthere is no name in the group <" + val.name + ">\n\n");
             	var get = variable_struct_get(val.struct, val.name);
             	if !is_undefined(get) with val get();
             } else if is_method(val) val();
@@ -140,32 +132,37 @@ function snCleaner() {
     }
 }
 
-/// @function snAccess([-1#previous;1#hook;0|default#root]);
+/// @function snAutoAccess([-1#previous;1#hook;default#root]);
 /// @description
 /// @param [-1#previous;1#hook;0|default#root] {number}
-function snAccess() {
-	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_prev_") return other;
+function snAutoAccess() {
+	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHide_inhr_") 
+		throw "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) {
 			if string_length(argument[0]) {
 				var char = string_char_at(argument[0], 1);
-				if (char == "p") return self.__devlocomotive_singletonTools_snHide_prev_;
-				if (char == "h") return self.__devlocomotive_singletonTools_snHide_hook_;
+				if (char == "p") return other;
+				if (char == "h") return self.__devlocomotive_singletonTools_snHide_accs_.hook;
 			}
-			return self.__devlocomotive_singletonTools_snHide_root_;
+			return self.__devlocomotive_singletonTools_snHide_accs_.root;
 		} else if is_numeric(argument[0]) {
-		    if (argument[0] == -1) return self.__devlocomotive_singletonTools_snHide_prev_;
-		    if (argument[0] == 1)  return self.__devlocomotive_singletonTools_snHide_hook_;
+		    if (argument[0] == -1) return other;
+		    if (argument[0] == 1)  return self.__devlocomotive_singletonTools_snHide_accs_.hook;
 		}
 	}
-    return self.__devlocomotive_singletonTools_snHide_root_;
+    return self.__devlocomotive_singletonTools_snHide_accs_.root;
+}
+
+function snInher() {
+	
 }
 
 /* replacer
-	__devlocomotive_singletonTools_snHide_auto_
-	__devlocomotive_singletonTools_snHide_prev_
-	__devlocomotive_singletonTools_snHide_root_
-	__devlocomotive_singletonTools_snHide_hook_
+	__devlocomotive_singletonTools_snHide_:
+		__devlocomotive_singletonTools_snHide_auto_
+		__devlocomotive_singletonTools_snHide_inhr_
+		__devlocomotive_singletonTools_snHide_accs_
 */
 
 //////////////////////////////////////////////////////////////////////////////*/
