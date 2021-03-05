@@ -82,6 +82,7 @@ function snRunner() {
 		}
 	});
 	var cleaner = argument_count > 1 ? argument[1] : undefined; // cleaner
+    var struct = snGroup();
     if is_method(cleaner) { // used method
     	var group = snGroup();
     	group.__devlocomotive_singletonTools_snHide_auto_ = undefined;
@@ -94,7 +95,6 @@ function snRunner() {
         group.name = cleaner;
         snCleaner(group);
     }
-    struct = snGroup();
 	struct.__devlocomotive_singletonTools_snHide_accs_ = // open access
 		{ prev : undefined
 		, root : struct
