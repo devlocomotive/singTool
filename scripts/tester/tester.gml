@@ -1,5 +1,13 @@
 
 //
+var group = snGroup();
+assert_is_struct(group);
+assert(is_snGroup(group));
+assert_equal(variable_struct_names_count(group), 0);
+assert_equal(string(group), "<snGroup>");
+
+/*
+//
 var gl_empty = string(self);
 
 //
