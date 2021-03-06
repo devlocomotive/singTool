@@ -77,13 +77,13 @@ var struct = snRunner(function() {
 	assert(self == snAutoAccess("r"));
 	assert(self == snAutoAccess(0));
 	assert(self == snAutoAccess(undefined));
-	assert_has_key(self, "__devlocomotive_singletonTools_snHide_accs_");
-	assert(__devlocomotive_singletonTools_snHide_accs_.prev == undefined);
-	assert(__devlocomotive_singletonTools_snHide_accs_.root == self);
-	assert(__devlocomotive_singletonTools_snHide_accs_.hook == self);
+	assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+	assert(__devlocomotive_singletonTools_snHidden_accs_.prev == undefined);
+	assert(__devlocomotive_singletonTools_snHidden_accs_.root == self);
+	assert(__devlocomotive_singletonTools_snHidden_accs_.hook == self);
 	var _g1 = {};
 	snDefault("base", _g1);
-	var _g0 = __devlocomotive_singletonTools_snHide_accs_.defs;
+	var _g0 = __devlocomotive_singletonTools_snHidden_accs_.defs;
 	var _i0 = self;
 	with snGroup("next") {
 		assert(is_snGroup(self));
@@ -93,7 +93,7 @@ var struct = snRunner(function() {
 		assert(other == snAutoAccess(undefined));
 		assert_has_key(self, "base");
 		assert(base == _g1);
-		var _g2 = __devlocomotive_singletonTools_snHide_accs_.defs;
+		var _g2 = __devlocomotive_singletonTools_snHidden_accs_.defs;
 		assert_fail(_g0 == _g2);
 		assert_equal(_g0, _g2);
 		assert(other == _i0);
@@ -108,8 +108,13 @@ var struct = snRunner(function() {
 		assert(other == snAutoAccess("h"));
 		assert(other == snAutoAccess(1));
 		assert(undefined == snAutoAccess(-1, 2));
-		// assert(undefined == snAutoAccess(-1, 3));
-		assert_throws([snAutoAccess, -1, 3], "\n\tcannot rise higher than the root group\n\n");
+		try {
+			snAutoAccess(-1, 3);
+		} catch (e) {
+			if (e != "\n\tcannot rise higher than the root group\n\n")
+				show_error("error", true);
+		}
+		
 	}
 }, undefined, "clear");
 

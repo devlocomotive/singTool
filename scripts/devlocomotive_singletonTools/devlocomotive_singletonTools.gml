@@ -142,8 +142,6 @@ function snCleaner() {
     				variable_struct_remove(stackTemp, argument[0].id);
     				break;
     		}
-    		variable_struct_remove(argument[0], "__devlocomotive_singletonTools_snHidden_type_");
-    		array_push(stackCleaner, argument[0]);
     		exit;
     	}
     }
