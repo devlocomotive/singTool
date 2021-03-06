@@ -1,29 +1,41 @@
 
 /* info
     name            \\ singletonTools
-    version         \\ 100 (from 04.03.21)
+    version         \\ 100
     autor           \\ devlocomotive
-    data            \\ 02.03.21
+    data-create     \\ 02.03.21
+    data-updata     \\ 06.03.21
 */
 
 /* link
     git-hub         \\ 
     marketplace     \\ 
-    itch            \\ 
+*/
+
+/* fast info
+	snGroup      -> new group
+	is_snGroup   -> is group
+	snRunner     -> run code with sn-interface
+	snCleaner    -> run cleaner for <snRunner>-purifiers
+	--------------> sn-interface
+	snRunAccess  -> get group => root / hook-(snGroup).used / previous-<level>
+	snRunDefault -> set / remove inheritance of fields
 */
 
 /* description
     
 */
 
-//****************************************************************************//
+///**************************************************************************///
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/// @function snGroup([key], [<runner>-hook]);
+// throw format "\n\tsingletonTools:\n\t" + message + "\n\n"
+
+/// @function snGroup([key], [(snRunner)-hook]);
 /// @description
-/// @param [key]           {string}
-/// @param [<runner>-hook] {bool}
+/// @param [key]             {string}
+/// @param [(snRunner)-hook] {bool}
 function snGroup() {
     static constr = method_get_index(function() constructor {
     	static toString = function() {
@@ -34,9 +46,9 @@ function snGroup() {
 		return new constr(); // [arg 0] just return new group
 	else {
 		var key = argument[0];
-		if !is_string(key) or (key == "") throw "\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
+		if !is_string(key) or (key == "") throw "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
 	}
-    if variable_struct_exists(self, key) throw "\n\tkey is busy\n\n"; // check argument {key} is no busy
+    if variable_struct_exists(self, key) throw "\n\tsingletonTools:\n\tkey is busy\n\n"; // check argument {key} is no busy
     var news = new constr();
     if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") { // if used <snRunner> -> create access
     	var defs_loc = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
@@ -57,7 +69,7 @@ function snGroup() {
     		}
     	var access_clear = snGroup();
     	access_clear.__devlocomotive_singletonTools_snHidden_type_ = "temp-push";
-    	access_clear.id = root.__devlocomotive_singletonTools_snHidden_accs_.id
+    	access_clear.id = root.__devlocomotive_singletonTools_snHidden_accs_.id;
     	access_clear.group = news;
     	snCleaner(access_clear);
     }
@@ -97,9 +109,9 @@ function snRunner() {
 	var cleaner = argument_count > 2 ? argument[2] : undefined; // cleaner
     var struct = snGroup();
     if is_method(cleaner)
-    	typeSet("cleaner", {run : method(struct, cleaner)});
+    	typeSet("cleaner", {run : method(struct, cleaner)}); // method cleaner
     else if is_string(cleaner) and (cleaner != "")
-	    typeSet("cleaner", {struct : struct, name : cleaner});
+	    typeSet("cleaner", {struct : struct, name : cleaner}); // field cleaner
     var current = snGroup();
     current.id = typeSet("temp-id");
     current.group = struct;
@@ -112,12 +124,13 @@ function snRunner() {
 		, defs : {}
 		}
 	method(struct, argument[0])(argument[1]); // run {runner}
-	typeSet("temp-clear", current);
+	typeSet("temp-clear", current); // close access
     return struct; // new singleton
 }
 
 /// @function snCleaner();
 /// @description
+/// @param <none> {none}
 function snCleaner() {
     static stackCleaner = [];
     static stackTemp = {};
@@ -145,14 +158,14 @@ function snCleaner() {
     		exit;
     	}
     }
-    if is_undefined(stackCleaner) throw "\n\tthe application is assumed to be complete\n\n"; // if the stackCleaner has already been used
+    if is_undefined(stackCleaner) throw "\n\tsingletonTools:\n\tthe application is assumed to be complete\n\n"; // if the stackCleaner has already been used
     var i = 0, run;
     repeat array_length(stackCleaner) {
     	run = stackCleaner[i++];
     	if variable_struct_exists(run, "run")
     		run.run(); // used method
     	else { // used field struct
-    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tthere is no key <" + run.name + "> in the group\n\n"); // if field not exists
+    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tsingletonTools:\n\tthere is no key <" + run.name + "> in the group\n\n"); // if field not exists
         	var get = variable_struct_get(run.struct, run.name);
         	if !is_undefined(get) with run get();
     	}
@@ -169,7 +182,7 @@ function snRunAccess() {
 		if (count >= 1) {
 			var root = self.__devlocomotive_singletonTools_snHidden_accs_.prev;
 			repeat (count - 1) {
-				if is_undefined(root) throw "\n\tcannot rise higher than the root group\n\n"; // if current group is root
+				if is_undefined(root) throw "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n"; // if current group is root
 				root = root.__devlocomotive_singletonTools_snHidden_accs_.prev;
 			}
 			return root;
@@ -177,7 +190,7 @@ function snRunAccess() {
 		return self;
 	});
 	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
-		throw "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
+		throw "\n\tsingletonTools:\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
 			if (argument[0] != "") {
@@ -195,30 +208,33 @@ function snRunAccess() {
     return self.__devlocomotive_singletonTools_snHidden_accs_.root; // or root
 }
 
-/// @function snRunDefault(key, [value]);
+/// @function snRunDefault([key], [value]);
 /// @description
-/// @param key   {string}
-/// @param value {any}
+/// @param [key]   {string}
+/// @param [value] {any}
 function snRunDefault() {
 	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
-		throw "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
-	if !is_string(argument[0]) or (argument[0] == "") throw "\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
+		throw "\n\tsingletonTools:\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
+	if (argument_count == 0) {
+		self.__devlocomotive_singletonTools_snHidden_accs_.defs = {}; // remove all value-default
+		exit;
+	}
+	if !is_string(argument[0]) or (argument[0] == "") throw "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
 	if (argument_count > 1)
 		variable_struct_set(self.__devlocomotive_singletonTools_snHidden_accs_.defs, argument[0], argument[1]); // set value-default
-	else {
-		if (argument_count > 0) { // remove value-default
-			var defs = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
-			if variable_struct_exists(defs, argument[0]) variable_struct_remove(defs, argument[0]);
-		} else self.__devlocomotive_singletonTools_snHidden_accs_.defs = {}; // remove all value-default
+	else {  
+		// remove value-default
+		var defs = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
+		if variable_struct_exists(defs, argument[0]) variable_struct_remove(defs, argument[0]);
 	}
 }
 
-/* for replacer
-	__devlocomotive_singletonTools_snHidden_:
-		__devlocomotive_singletonTools_snHidden_type_ - hidden
-		__devlocomotive_singletonTools_snHidden_accs_ - main
-*/
-
 //////////////////////////////////////////////////////////////////////////////*/
 ////////////////////////////////////////////////////////////////////////////////
-//****************************************************************************//
+///**************************************************************************///
+
+/* for replacer
+	__devlocomotive_singletonTools_snHidden_:
+		__devlocomotive_singletonTools_snHidden_type_ - super-hidden
+		__devlocomotive_singletonTools_snHidden_accs_ - temp-hidden
+*/
