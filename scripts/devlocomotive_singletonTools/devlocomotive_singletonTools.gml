@@ -40,13 +40,13 @@ function snGroup() {
     var news = new constr();
     if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") { // if used <snRunner> -> create access
     	var defs_loc = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
-    	var names = variable_struct_get_names(defs_loc), i = 0, defs_new = {}, key, val;
-    	repeat array_length(names) { // used <snDefault> mechanism
-    		key = names[i++];
-    		if (string_pos("__devlocomotive_singletonTools_snHidden_", key) == 1) continue; // exeption (+ ``)
-    		val = variable_struct_get(defs_loc, key);
-    		variable_struct_set(news, key, val);
-	    	variable_struct_set(defs_new, key, val);
+    	var names = variable_struct_get_names(defs_loc), i = 0, defs_new = {}, defs_key, val;
+    	repeat array_length(names) { // used <snRunDefault> mechanism
+    		defs_key = names[i++];
+    		if (string_pos("__devlocomotive_singletonTools_snHidden_", defs_key) == 1) continue; // exeption (+ ``)
+    		val = variable_struct_get(defs_loc, defs_key);
+    		variable_struct_set(news, defs_key, val);
+	    	variable_struct_set(defs_new, defs_key, val);
     	}
     	var curr = self, root = self.__devlocomotive_singletonTools_snHidden_accs_.root;
     	news.__devlocomotive_singletonTools_snHidden_accs_ = // access create
@@ -160,11 +160,11 @@ function snCleaner() {
     stackCleaner = undefined; // clear stackCleaner
 }
 
-/// @function snAutoAccess([-1#previous;1#hook;default#root], [<previous>-level]);
+/// @function snRunAccess([-1#previous;1#hook;default#root], [<previous>-level]);
 /// @description
 /// @param [-1#previous;1#hook;0|default#root] {number/string}
 /// @param [<previous>-level]				   {count}
-function snAutoAccess() {
+function snRunAccess() {
 	static getPrevious = method_get_index(function(count) { // previous-level get
 		if (count >= 1) {
 			var root = self.__devlocomotive_singletonTools_snHidden_accs_.prev;
@@ -195,11 +195,11 @@ function snAutoAccess() {
     return self.__devlocomotive_singletonTools_snHidden_accs_.root; // or root
 }
 
-/// @function snDefault(key, [value]);
+/// @function snRunDefault(key, [value]);
 /// @description
 /// @param key   {string}
 /// @param value {any}
-function snDefault() {
+function snRunDefault() {
 	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
 		throw "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
 	if !is_string(argument[0]) or (argument[0] == "") throw "\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct

@@ -44,8 +44,8 @@ assert_fail(find(_0));
 //
 assert_throws([snGroup, 0], "\n\tthe key must be a string and contain at least one character\n\n");
 assert_throws([snGroup, undefined], "\n\tthe key must be a string and contain at least one character\n\n");
-assert_throws([snAutoAccess, undefined], "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n");
-assert_throws([snDefault, "key", "value"], "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n");
+assert_throws([snRunAccess, undefined], "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n");
+assert_throws([snRunDefault, undefined], "\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n");
 
 //
 var _2 = {};
@@ -72,51 +72,55 @@ var struct = snRunner(function() {
 		ds_list_destroy(list);
 	}
 	assert(is_snGroup(self));
-	assert(self == snAutoAccess());
-	assert(self == snAutoAccess("root"));
-	assert(self == snAutoAccess("r"));
-	assert(self == snAutoAccess(0));
-	assert(self == snAutoAccess(undefined));
+	assert(self == snRunAccess());
+	assert(self == snRunAccess("root"));
+	assert(self == snRunAccess("r"));
+	assert(self == snRunAccess(0));
+	assert(self == snRunAccess(undefined));
 	assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
 	assert(__devlocomotive_singletonTools_snHidden_accs_.prev == undefined);
 	assert(__devlocomotive_singletonTools_snHidden_accs_.root == self);
 	assert(__devlocomotive_singletonTools_snHidden_accs_.hook == self);
 	var _g1 = {};
-	snDefault("base", _g1);
+	snRunDefault("base", _g1);
 	var _g0 = __devlocomotive_singletonTools_snHidden_accs_.defs;
 	var _i0 = self;
 	with snGroup("next") {
 		assert(is_snGroup(self));
-		assert(other == snAutoAccess("root"));
-		assert(other == snAutoAccess("r"));
-		assert(other == snAutoAccess(0));
-		assert(other == snAutoAccess(undefined));
+		assert(other == snRunAccess("root"));
+		assert(other == snRunAccess("r"));
+		assert(other == snRunAccess(0));
+		assert(other == snRunAccess(undefined));
+		assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
 		assert_has_key(self, "base");
 		assert(base == _g1);
 		var _g2 = __devlocomotive_singletonTools_snHidden_accs_.defs;
 		assert_fail(_g0 == _g2);
 		assert_equal(_g0, _g2);
 		assert(other == _i0);
-		assert(snAutoAccess("previous") == _i0);
-		assert(other == snAutoAccess("previous"));
-		assert(other == snAutoAccess("p"));
-		assert(other == snAutoAccess(-1));
-		assert(other == snAutoAccess(-1, 1));
-		assert(other == snAutoAccess("p", 1));
-		assert(other == snAutoAccess("previous", 1));
-		assert(other == snAutoAccess("hook"));
-		assert(other == snAutoAccess("h"));
-		assert(other == snAutoAccess(1));
-		assert(undefined == snAutoAccess(-1, 2));
+		assert(snRunAccess("previous") == _i0);
+		assert(other == snRunAccess("previous"));
+		assert(other == snRunAccess("p"));
+		assert(other == snRunAccess(-1));
+		assert(other == snRunAccess(-1, 1));
+		assert(other == snRunAccess("p", 1));
+		assert(other == snRunAccess("previous", 1));
+		assert(other == snRunAccess("hook"));
+		assert(other == snRunAccess("h"));
+		assert(other == snRunAccess(1));
+		assert(undefined == snRunAccess(-1, 2));
 		try {
-			snAutoAccess(-1, 3);
+			snRunAccess(-1, 3);
 		} catch (e) {
 			if (e != "\n\tcannot rise higher than the root group\n\n")
 				show_error("error", true);
 		}
-		
 	}
 }, undefined, "clear");
+
+//
+assert_doesnt_have_key(struct, "__devlocomotive_singletonTools_snHidden_accs_");
+assert_doesnt_have_key(struct.next, "__devlocomotive_singletonTools_snHidden_accs_");
 
 //
 snCleaner();
@@ -150,21 +154,21 @@ var struct = snRunner(function(root) {
 			assert(__devlocomotive_singletonTools_snHide_prev_ == other);
 			assert(__devlocomotive_singletonTools_snHide_root_ == root);
 			assert(__devlocomotive_singletonTools_snHide_hook_ == root);
-			assert(snAccess(-1) == __devlocomotive_singletonTools_snHide_prev_);
-			assert(snAccess(0) == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess(1) == __devlocomotive_singletonTools_snHide_hook_);
-			assert(snAccess("p") == __devlocomotive_singletonTools_snHide_prev_);
-			assert(snAccess("r") == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess("h") == __devlocomotive_singletonTools_snHide_hook_);
-			assert(snAccess("prev-234") == __devlocomotive_singletonTools_snHide_prev_);
-			assert(snAccess("root-2-342341") == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess("hooksdf2-") == __devlocomotive_singletonTools_snHide_hook_);
-			assert(snAccess("z") == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess(100) == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess(undefined) == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess([]) == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess({}) == __devlocomotive_singletonTools_snHide_root_);
-			assert(snAccess() == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess(-1) == __devlocomotive_singletonTools_snHide_prev_);
+			assert(snRunAccess(0) == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess(1) == __devlocomotive_singletonTools_snHide_hook_);
+			assert(snRunAccess("p") == __devlocomotive_singletonTools_snHide_prev_);
+			assert(snRunAccess("r") == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess("h") == __devlocomotive_singletonTools_snHide_hook_);
+			assert(snRunAccess("prev-234") == __devlocomotive_singletonTools_snHide_prev_);
+			assert(snRunAccess("root-2-342341") == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess("hooksdf2-") == __devlocomotive_singletonTools_snHide_hook_);
+			assert(snRunAccess("z") == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess(100) == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess(undefined) == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess([]) == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess({}) == __devlocomotive_singletonTools_snHide_root_);
+			assert(snRunAccess() == __devlocomotive_singletonTools_snHide_root_);
 			with snGroup("keys", true) {
 				var keys = self;
 				assert(__devlocomotive_singletonTools_snHide_prev_ == other);
@@ -176,21 +180,21 @@ var struct = snRunner(function(root) {
 					assert(__devlocomotive_singletonTools_snHide_root_ == root);
 					assert(__devlocomotive_singletonTools_snHide_hook_ == keys);
 					assert(__devlocomotive_singletonTools_snHide_hook_ == __devlocomotive_singletonTools_snHide_prev_);
-					assert(snAccess(-1) == __devlocomotive_singletonTools_snHide_prev_);
-					assert(snAccess(0) == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess(1) == __devlocomotive_singletonTools_snHide_hook_);
-					assert(snAccess("p") == __devlocomotive_singletonTools_snHide_prev_);
-					assert(snAccess("r") == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess("h") == __devlocomotive_singletonTools_snHide_hook_);
-					assert(snAccess("prev-234") == __devlocomotive_singletonTools_snHide_prev_);
-					assert(snAccess("root-2-342341") == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess("hooksdf2-") == __devlocomotive_singletonTools_snHide_hook_);
-					assert(snAccess("z") == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess(100) == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess(undefined) == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess([]) == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess({}) == __devlocomotive_singletonTools_snHide_root_);
-					assert(snAccess() == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess(-1) == __devlocomotive_singletonTools_snHide_prev_);
+					assert(snRunAccess(0) == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess(1) == __devlocomotive_singletonTools_snHide_hook_);
+					assert(snRunAccess("p") == __devlocomotive_singletonTools_snHide_prev_);
+					assert(snRunAccess("r") == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess("h") == __devlocomotive_singletonTools_snHide_hook_);
+					assert(snRunAccess("prev-234") == __devlocomotive_singletonTools_snHide_prev_);
+					assert(snRunAccess("root-2-342341") == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess("hooksdf2-") == __devlocomotive_singletonTools_snHide_hook_);
+					assert(snRunAccess("z") == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess(100) == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess(undefined) == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess([]) == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess({}) == __devlocomotive_singletonTools_snHide_root_);
+					assert(snRunAccess() == __devlocomotive_singletonTools_snHide_root_);
 					assert(mark == __devlocomotive_singletonTools_snHide_prev_.__devlocomotive_singletonTools_snHide_prev_.__devlocomotive_singletonTools_snHide_prev_);
 				}
 			}
