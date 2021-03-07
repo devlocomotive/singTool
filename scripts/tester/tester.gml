@@ -1,3 +1,12 @@
+// test for script-devlocomotive_singletonTools
+//
+var test = 
+	{ addition : 0
+	, main : 1
+	, current : undefined
+	, nothing : -1
+	} 
+test.current = test.main;
 
 //
 show_debug_message("\n\tTester\n");
@@ -6,11 +15,7 @@ show_debug_message("\n\tTester\n");
 groupMarkirator({});
 
 //
-var test = 
-	{ addition : 0
-	, main : 1
-	, current : undefined
-	} test.current = test.main;
+if (test.current == test.nothing) exit;
 
 //
 if (test.current == test.addition) {
