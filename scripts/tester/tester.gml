@@ -9,15 +9,15 @@ groupMarkirator({});
 var test = 
 	{ addition : 0
 	, main : 1
-	, current : 1
-	}
+	, current : undefined
+	} test.current = test.main;
 
 //
 if (test.current == test.addition) {
 	var value = "error";
 	var str = snRunner(false, function() {
 	}, value);
-	assert_throws([snCleaner, undefined], "\n\tsingletonTools:\n\tthere is no key <" + value + "> in the group\n\n");
+	assert_throws([snCleaner, undefined], "\n\tsingletonTools:\n\tthere is no key '" + value + "' in the group\n\n");
 	show_message("all okey");
 	exit;
 }
@@ -75,8 +75,8 @@ assert_fail(find(_0));
 //
 assert_throws([snGroup, 0], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
 assert_throws([snGroup, undefined], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
-assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
-assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
+assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n");
+assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n");
 
 //
 var _2 = {};
@@ -308,8 +308,8 @@ var struct2 = snRunner(false, function() {
 		ds_grid_destroy(grid);
 		log("ds_grid destroy", grid);
 	}
-	assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
-	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
+	assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n");
+	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n");
 }, "clear");
 
 //
@@ -330,6 +330,13 @@ var struct3 = snRunner(true, function() {
 	out.__devlocomotive_singletonTools_snHidden_accs_ = "test";
 	assert_throws([snRunDefault, ""], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
 	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
+	snRunDefault("__devlocomotive_singletonTools_snHidden_test", self);
+	with snGroup("test") {
+		assert_doesnt_have_key(self, "__devlocomotive_singletonTools_snHidden_test");
+		with snGroup("test") {
+			assert_doesnt_have_key(self, "__devlocomotive_singletonTools_snHidden_test");
+		}
+	}
 });
 
 //

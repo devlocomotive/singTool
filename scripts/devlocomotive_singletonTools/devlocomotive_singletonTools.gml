@@ -12,18 +12,42 @@
     marketplace     \\ 
 */
 
-/* function-list
-	snGroup      -> an empty structure created by a special constructor
-	is_snGroup   -> checks if a structure is a group-<snGroup>
-	snRunner     -> run code with sn-interface
-	snCleaner    -> run cleaner for (snRunner)-cleaner
-	--------------> sn-interface
-	snRunAccess  -> get group => root / hook-(snGroup).used / previous-<level>
-	snRunDefault -> set / remove inheritance of fields
-*/
-
-/* description
+/* 
+    description:
+    	design tool for writing singletons
+    	this tool hides some things, and does some routine (rather specific)
+    	there is nothing new and special here
+    	
+    example:
     
+    // used - open
+    #macro glList __singleton()
+    
+    // used - hide
+    function __singleton() {
+    	static data = snRunner(true, function() {
+    		list = ds_list_create();
+    		clear = function() {
+    			ds_list_destroy(list);
+    		}
+    		with snGroup("just") {
+    			_root_list = snRunAccess(-1).list;
+    			clear = function() {
+    				ds_list_clear(_root_list);
+    			}
+    			push = function() {
+    				...
+    			}
+    		}
+    	}, "clear");
+    	return data;
+    }
+    
+    // used open
+    glList.push(1,2,3);
+    
+    // used hide
+    __singleton().push(1,2,3);
 */
 
 ///**************************************************************************///
@@ -33,7 +57,12 @@
 // throw format "\n\tsingletonTools:\n\t" + message + "\n\n"
 
 /// @function snGroup([key], [(snRunner)-hook]);
-/// @description
+/// @description just:snGroup() -> creates an empty group (a regular structure created by another constructor)
+//				 just:snGroup("key") -> creates an empty group and sets it to the current structure with the key "key"
+//				 -- used <sn-interface> --
+//				 snGroup() -> snGroup()
+//				 snGroup("key") -> just:snGroup("key") -> generates access to groups above and inheritance of fields
+//				 snGroup("key", true) -> just:snGroup("key") -> the access field <hook> refers to the new group
 /// @param [key]             {string}
 /// @param [(snRunner)-hook] {bool}
 function snGroup() {
@@ -50,12 +79,12 @@ function snGroup() {
 	}
     if variable_struct_exists(self, key) throw "\n\tsingletonTools:\n\tkey is busy\n\n"; // check argument {key} is no busy
     var news = new constr();
-    if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") { // if used <snRunner> -> create access
+    if is_snGroup(self) and variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") { // if used <sn-interface> -> create access
     	var defs_loc = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
     	var names = variable_struct_get_names(defs_loc), i = 0, defs_new = {}, defs_key, val;
     	repeat array_length(names) { // used <snRunDefault> mechanism
     		defs_key = names[i++];
-    		if (string_pos("__devlocomotive_singletonTools_snHidden_", defs_key) == 1) continue; // exeption
+    		if (string_pos("__devlocomotive_singletonTools_snHidden_", defs_key) == 1) continue; // exeption keys
     		val = variable_struct_get(defs_loc, defs_key);
     		variable_struct_set(news, defs_key, val);
 	    	variable_struct_set(defs_new, defs_key, val);
@@ -71,22 +100,27 @@ function snGroup() {
     	access_clear.__devlocomotive_singletonTools_snHidden_type_ = "temp-push";
     	access_clear.id = root.__devlocomotive_singletonTools_snHidden_accs_.id;
     	access_clear.group = news;
-    	snCleaner(access_clear);
+    	snCleaner(access_clear); // access-clear memory
     }
     variable_struct_set(self, key, news); // set a key in current struct
     return news; // return new group
 }
 
-/// @function is_snGroup(group);
-/// @description
-/// @param group {snGroup}
+/// @function is_snGroup(value);
+/// @description is_snGroup(value) -> will return true if the value is a group
+/// @param value {any}
 function is_snGroup() {
     static instance = instanceof(snGroup());
     return is_struct(argument0) and (instanceof(argument0) == instance); // check hidden instanceof
 }
 
 /// @function snRunner(sn-interface, runner, [cleaner]);
-/// @description
+/// @description snRunner -> will run the code in the new group and return it
+//				 snRunner(false, runner) -> will run the {runner} script, without the <sn-interface> interface
+//				 snRunner(true, runner) -> will run the {runner} script from the <sn-interface> interface
+//				 -- additional argument --
+//				 snRunner(sn-interface, runner, "field") -> add to the global delete stack, a link to the specified "field"
+//				 snRunner(sn-interface, runner, method/function) -> will add to the global stack delete, the method referring to the singleton
 /// @param sn-interface {bool}
 /// @param runner       {method}
 /// @param cleaner      {method/string}
@@ -123,20 +157,20 @@ function snRunner() {
 			, hook : struct
 			, defs : {}
 			}
-		method(struct, argument[1])(); // run {runner} with sn-interface
+		method(struct, argument[1])(); // run {runner} with <sn-interface>
 		typeSet("temp-clear", current); // close access
-    } else method(struct, argument[1])(); // run {runner} without sn-interface
+    } else method(struct, argument[1])(); // run {runner} without <sn-interface>
     return struct; // new singleton
 }
 
 /// @function snCleaner();
-/// @description
+/// @description snCleaner() -> will run methods and methods from fields
 /// @param <none> {none}
 function snCleaner() {
     static stackCleaner = [];
     static stackTemp = {};
     if argument_count {
-    	if is_snGroup(argument[0]) and variable_struct_exists(argument[0], "__devlocomotive_singletonTools_snHidden_type_") { // hide - push to stackCleaner
+    	if is_snGroup(argument[0]) and variable_struct_exists(argument[0], "__devlocomotive_singletonTools_snHidden_type_") { // hide - push to 'stackCleaner'
     		switch variable_struct_get(argument[0], "__devlocomotive_singletonTools_snHidden_type_") {
     			case "cleaner": // cleaner memory
     				variable_struct_remove(argument[0], "__devlocomotive_singletonTools_snHidden_type_");
@@ -159,23 +193,32 @@ function snCleaner() {
     		exit;
     	}
     }
-    if is_undefined(stackCleaner) throw "\n\tsingletonTools:\n\tthe application is assumed to be complete\n\n"; // if the stackCleaner has already been used
+    if is_undefined(stackCleaner) throw "\n\tsingletonTools:\n\tthe application is assumed to be complete\n\n"; // if the 'stackCleaner' has already been used
     var i = 0, run;
     repeat array_length(stackCleaner) {
     	run = stackCleaner[i++];
     	if variable_struct_exists(run, "run")
     		run.run(); // used method
     	else { // used field struct
-    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tsingletonTools:\n\tthere is no key <" + run.name + "> in the group\n\n"); // if field not exists
+    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tsingletonTools:\n\tthere is no key '" + run.name + "' in the group\n\n"); // if field not exists
         	var get = variable_struct_get(run.struct, run.name);
         	if !is_undefined(get) with run get();
     	}
     }
-    stackCleaner = undefined; // clear stackCleaner
+    stackCleaner = undefined; // clear 'stackCleaner'
 }
 
 /// @function snRunAccess([-1#previous;1#hook;default#root], [<previous>-level]);
-/// @description
+/// @description -- used <sn-interface> --
+//				 snRunAccess(1) -> <hook>
+//				 snRunAccess("h" + "..any..") -> <hook>
+//				 snRunAccess(-1) -> <previous>-1.level
+//				 snRunAccess(-1, n < 1) -> <previous>-0.level (self)
+//				 snRunAccess(-1, n > 1) -> <previous>-n.level
+//  			 snRunAccess("p" + "..any..") -> <previous>-1.level
+//				 snRunAccess("p" + "..any..", n < 1) -> <previous>-0.level (self)
+//				 snRunAccess("p" + "..any..", n > 1) -> <previous>-n.level
+//				 other -> <root>
 /// @param [-1#previous;1#hook;0|default#root] {number/string}
 /// @param [<previous>-level]				   {count}
 function snRunAccess() {
@@ -190,8 +233,8 @@ function snRunAccess() {
 		}
 		return self;
 	});
-	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
-		throw "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n";
+	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <sn-interface>
+		throw "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
 			if (argument[0] != "") {
@@ -210,12 +253,16 @@ function snRunAccess() {
 }
 
 /// @function snRunDefault([key], [value]);
-/// @description
+/// @description independent for each group
+//			     -- used <sn-interface> --
+//				 snRunDefault("key", value) -> set inheritance
+//				 snRunDefault("key") -> remove inheritance
+//				 snRunDefault() -> remove all inheritance
 /// @param [key]   {string}
 /// @param [value] {any}
 function snRunDefault() {
-	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
-		throw "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n";
+	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <sn-interface>
+		throw "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n";
 	if (argument_count == 0) {
 		self.__devlocomotive_singletonTools_snHidden_accs_.defs = {}; // remove all value-default
 		exit;
