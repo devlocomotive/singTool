@@ -1,5 +1,36 @@
 
 //
+show_debug_message("\n\tTester\n");
+
+//
+groupMarkirator({});
+
+//
+var test = 
+	{ addition : 0
+	, main : 1
+	, current : 1
+	}
+
+//
+if (test.current == test.addition) {
+	var value = "error";
+	var str = snRunner(false, function() {
+	}, value);
+	assert_throws([snCleaner, undefined], "\n\tsingletonTools:\n\tthere is no key <" + value + "> in the group\n\n");
+	show_message("all okey");
+	exit;
+}
+
+//
+function log() {
+	var str = "\t", i = 0;
+	repeat argument_count
+		str += string_replace_all(string_replace_all(argument[i++], "\n", "\\n"), "\t", "\\t") + (i < argument_count ? " " : "");
+	show_debug_message(str);
+}
+
+//
 var group = snGroup();
 assert_is_struct(group);
 assert(is_snGroup(group));
@@ -44,8 +75,8 @@ assert_fail(find(_0));
 //
 assert_throws([snGroup, 0], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
 assert_throws([snGroup, undefined], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
-assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n");
-assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n");
+assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
+assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
 
 //
 var _2 = {};
@@ -65,12 +96,15 @@ with _2 {
 }
 
 //
-var struct = snRunner(function() {
+var struct = snRunner(true, function() {
 	list = ds_list_create();
 	assert(ds_exists(list, ds_type_list));
 	clear = function() {
 		ds_list_destroy(list);
+		log("ds_list destroy", list);
 	}
+	var out = snGroup();
+	assert_equal(variable_struct_names_count(out), 0);
 	assert(is_snGroup(self));
 	assert(self == snRunAccess());
 	assert(self == snRunAccess("root"));
@@ -122,7 +156,24 @@ var struct = snRunner(function() {
 		}
 		snRunDefault("name", "NamedWow");
 		snRunDefault("base");
+		var _i1 = self;
 		with snGroup("a") {
+			assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+			assert(other == _i1);
+			assert(other == snRunAccess("previous"));
+			assert(other == snRunAccess("p"));
+			assert(other == snRunAccess(-1));
+			assert(other == snRunAccess(-1, 1));
+			assert(other == snRunAccess("p", 1));
+			assert(other == snRunAccess("previous", 1));
+			assert(_i0 == snRunAccess("hook"));
+			assert(_i0 == snRunAccess("h"));
+			assert(_i0 == snRunAccess(1));
+			assert(_i0 == snRunAccess());
+			assert(_i0 == snRunAccess(0));
+			assert(_i0 == snRunAccess("root"));
+			assert(_i0 == snRunAccess("r"));
+			assert(_i0 == snRunAccess(undefined));
 			assert_has_key(self, "name");
 			assert(name == "NamedWow");
 			assert_doesnt_have_key(self, "base");
@@ -135,6 +186,22 @@ var struct = snRunner(function() {
 			assert(name == "NamedWow");
 		}
 		with snGroup("b") {
+			assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+			assert(other == _i1);
+			assert(other == snRunAccess("previous"));
+			assert(other == snRunAccess("p"));
+			assert(other == snRunAccess(-1));
+			assert(other == snRunAccess(-1, 1));
+			assert(other == snRunAccess("p", 1));
+			assert(other == snRunAccess("previous", 1));
+			assert(_i0 == snRunAccess("hook"));
+			assert(_i0 == snRunAccess("h"));
+			assert(_i0 == snRunAccess(1));
+			assert(_i0 == snRunAccess());
+			assert(_i0 == snRunAccess(0));
+			assert(_i0 == snRunAccess("root"));
+			assert(_i0 == snRunAccess("r"));
+			assert(_i0 == snRunAccess(undefined));
 			assert_has_key(self, "name");
 			assert(name == "NamedWow");
 			assert_doesnt_have_key(self, "base");
@@ -145,12 +212,179 @@ var struct = snRunner(function() {
 			}
 		}
 		with snGroup("c") {
+			assert(other == _i1);
+			assert(other == snRunAccess("previous"));
+			assert(other == snRunAccess("p"));
+			assert(other == snRunAccess(-1));
+			assert(other == snRunAccess(-1, 1));
+			assert(other == snRunAccess("p", 1));
+			assert(other == snRunAccess("previous", 1));
+			assert(_i0 == snRunAccess("hook"));
+			assert(_i0 == snRunAccess("h"));
+			assert(_i0 == snRunAccess(1));
+			assert(_i0 == snRunAccess());
+			assert(_i0 == snRunAccess(0));
+			assert(_i0 == snRunAccess("root"));
+			assert(_i0 == snRunAccess("r"));
+			assert(_i0 == snRunAccess(undefined));
 			assert_doesnt_have_key(self, "base");
 			assert_has_key(self, "name");
 			assert(name == "NamedWow");
 		}
+		with snGroup("d", true) {
+			assert(other == _i1);
+			assert(other == snRunAccess("previous"));
+			assert(other == snRunAccess("p"));
+			assert(other == snRunAccess(-1));
+			assert(other == snRunAccess(-1, 1));
+			assert(other == snRunAccess("p", 1));
+			assert(other == snRunAccess("previous", 1));
+			assert(self == snRunAccess("hook"));
+			assert(self == snRunAccess("h"));
+			assert(self == snRunAccess(1));
+			assert(_i0 == snRunAccess());
+			assert(_i0 == snRunAccess(0));
+			assert(_i0 == snRunAccess("root"));
+			assert(_i0 == snRunAccess("r"));
+			assert(_i0 == snRunAccess(undefined));
+			assert_doesnt_have_key(self, "base");
+			assert_has_key(self, "name");
+			assert(name == "NamedWow");
+			var _i00 = self;
+			has = "mark";
+			with snGroup("a") {
+				with snGroup("a", true) {
+					var _i01 = self;
+					with snGroup("a") {
+						assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+						assert_has_key(self, "name");
+						assert(name == "NamedWow");
+						assert(_i01 == other);
+						assert(other == snRunAccess("previous"));
+						assert(other == snRunAccess("p"));
+						assert(other == snRunAccess(-1));
+						assert(other == snRunAccess(-1, 1));
+						assert(other == snRunAccess("p", 1));
+						assert(other == snRunAccess("previous", 1));
+						assert(_i01 == snRunAccess("hook"));
+						assert(_i01 == snRunAccess("h"));
+						assert(_i01 == snRunAccess(1));
+						assert(_i0 == snRunAccess());
+						assert(_i0 == snRunAccess(0));
+						assert(_i0 == snRunAccess("root"));
+						assert(_i0 == snRunAccess("r"));
+						assert(_i0 == snRunAccess(undefined));
+						assert_has_key(snRunAccess(-1, 3), "has");
+						assert_equal(snRunAccess(-1, 3).has, "mark");
+						assert(snRunAccess(-1, 5) == snRunAccess("root"));
+						assert(snRunAccess(-1, 5) == _i0);
+						assert(snRunAccess(-1, 6) == undefined);
+						try {
+							snRunAccess(-1, 7);
+						} catch (e) {
+							if (e != "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n")
+								show_error("error", true);
+						}try {
+							snRunAccess(-1, 8);
+						} catch (e) {
+							if (e != "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n")
+								show_error("error", true);
+						}
+						assert(self == snRunAccess(-1, 0));
+						assert(self == snRunAccess(-1, -1));
+						assert(self == snRunAccess(-1, -100));
+					}
+				}
+			}
+		}
 	}
-}, undefined, "clear");
+}, "clear");
+
+//
+var struct2 = snRunner(false, function() {
+	grid = ds_grid_create(1, 1);
+	assert(ds_exists(grid, ds_type_grid));
+	clear = function() {
+		ds_grid_destroy(grid);
+		log("ds_grid destroy", grid);
+	}
+	assert_throws([snRunAccess, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
+	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n");
+}, "clear");
+
+//
+snRunner(false, function() {
+	name = "superman - vinai";
+}, function() {
+	log("test cleaner:", name);
+});
+
+//
+snRunner(false, function() {
+	log("no cleaner");
+});
+
+//
+var struct3 = snRunner(true, function() {
+	out = snGroup();
+	out.__devlocomotive_singletonTools_snHidden_accs_ = "test";
+	assert_throws([snRunDefault, ""], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
+	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
+});
+
+//
+function groupMarkirator(struct) {
+	static name = "__wow_marker_wow__";
+	static stack = [];
+	var main = (array_length(stack) == 0), i = 0, val, names = variable_struct_get_names(struct);
+	if main and is_snGroup(struct) {
+		if !variable_struct_exists(struct, name) {
+			variable_struct_set(struct, name, undefined);
+			array_push(stack, struct);
+		}
+	}
+	repeat array_length(names) {
+		val = variable_struct_get(struct, names[i++]);
+		if is_snGroup(val) and !variable_struct_exists(val, name) {
+			variable_struct_set(val, name, undefined);
+			array_push(stack, val);
+			groupMarkirator(val);
+		}
+	}
+	if main {
+		i = 0;
+		repeat array_length(stack) variable_struct_remove(stack[i++], name);
+		val = stack;
+		stack = [];
+		return val;
+	}
+}
+
+//
+function groupDontHaveKeys(struct, keys) {
+	if !is_array(keys) keys = [keys];
+	var marking = groupMarkirator(struct), i = 0, j, stc;
+	repeat array_length(marking) {
+		stc = marking[i++];
+		j = 0;
+		repeat array_length(keys) {
+			if variable_struct_exists(stc, keys[j++]) return false;
+		}
+	}
+	return true;
+}
+
+//
+assert(groupDontHaveKeys(struct, "__devlocomotive_singletonTools_snHidden_accs_"));
+struct.next.a._a.__devlocomotive_singletonTools_snHidden_accs_ = "test";
+assert_fail(groupDontHaveKeys(struct, "__devlocomotive_singletonTools_snHidden_accs_"));
+
+//
+assert(groupDontHaveKeys(struct2, "__devlocomotive_singletonTools_snHidden_accs_"));
+assert_doesnt_have_key(struct2, "__devlocomotive_singletonTools_snHidden_accs_");
+
+//
+assert_fail(groupDontHaveKeys(struct3, "__devlocomotive_singletonTools_snHidden_accs_"));
 
 //
 assert_fail(find(struct));
@@ -162,7 +396,11 @@ assert_doesnt_have_key(struct.next, "__devlocomotive_singletonTools_snHidden_acc
 snCleaner();
 
 //
+assert_throws([snCleaner, undefined], "\n\tsingletonTools:\n\tthe application is assumed to be complete\n\n");
+
+//
 assert_fail(ds_exists(struct.list, ds_type_list));
+assert_fail(ds_exists(struct2.grid, ds_type_grid));
 
 //
 show_message("all okey");

@@ -4,19 +4,19 @@
     version         \\ 100
     autor           \\ devlocomotive
     data-create     \\ 02.03.21
-    data-updata     \\ 06.03.21
+    data-updata     \\ 07.03.21
 */
 
 /* link
-    git-hub         \\ 
+    git-hub         \\ https://github.com/devlocomotive/singTool
     marketplace     \\ 
 */
 
-/* fast info
-	snGroup      -> new group
-	is_snGroup   -> is group
+/* function-list
+	snGroup      -> an empty structure created by a special constructor
+	is_snGroup   -> checks if a structure is a group-<snGroup>
 	snRunner     -> run code with sn-interface
-	snCleaner    -> run cleaner for <snRunner>-purifiers
+	snCleaner    -> run cleaner for (snRunner)-cleaner
 	--------------> sn-interface
 	snRunAccess  -> get group => root / hook-(snGroup).used / previous-<level>
 	snRunDefault -> set / remove inheritance of fields
@@ -55,7 +55,7 @@ function snGroup() {
     	var names = variable_struct_get_names(defs_loc), i = 0, defs_new = {}, defs_key, val;
     	repeat array_length(names) { // used <snRunDefault> mechanism
     		defs_key = names[i++];
-    		if (string_pos("__devlocomotive_singletonTools_snHidden_", defs_key) == 1) continue; // exeption (+ ``)
+    		if (string_pos("__devlocomotive_singletonTools_snHidden_", defs_key) == 1) continue; // exeption
     		val = variable_struct_get(defs_loc, defs_key);
     		variable_struct_set(news, defs_key, val);
 	    	variable_struct_set(defs_new, defs_key, val);
@@ -67,7 +67,7 @@ function snGroup() {
     		, hook : (argument_count > 1 ? argument[1] : false) ? news : curr.__devlocomotive_singletonTools_snHidden_accs_.hook
     		, defs : defs_new // new default for independent inheritance
     		}
-    	var access_clear = snGroup();
+    	var access_clear = new constr();
     	access_clear.__devlocomotive_singletonTools_snHidden_type_ = "temp-push";
     	access_clear.id = root.__devlocomotive_singletonTools_snHidden_accs_.id;
     	access_clear.group = news;
@@ -85,11 +85,11 @@ function is_snGroup() {
     return is_struct(argument0) and (instanceof(argument0) == instance); // check hidden instanceof
 }
 
-/// @function snRunner(runner, argument, [cleaner]);
+/// @function snRunner(sn-interface, runner, [cleaner]);
 /// @description
-/// @param runner   {method}
-/// @param argument {any}
-/// @param cleaner  {method/string}
+/// @param sn-interface {bool}
+/// @param runner       {method}
+/// @param cleaner      {method/string}
 function snRunner() {
 	static typeSet = method_get_index(function(type, data) {
 		if !is_snGroup(data) {
@@ -106,25 +106,26 @@ function snRunner() {
 		data.__devlocomotive_singletonTools_snHidden_type_ = type;
 		return snCleaner(data);
 	});
-	var cleaner = argument_count > 2 ? argument[2] : undefined; // cleaner
-    var struct = snGroup();
+    var struct = snGroup(), cleaner = argument_count > 2 ? argument[2] : undefined;
     if is_method(cleaner)
     	typeSet("cleaner", {run : method(struct, cleaner)}); // method cleaner
     else if is_string(cleaner) and (cleaner != "")
 	    typeSet("cleaner", {struct : struct, name : cleaner}); // field cleaner
-    var current = snGroup();
-    current.id = typeSet("temp-id");
-    current.group = struct;
-    typeSet("temp-push", current);
-	struct.__devlocomotive_singletonTools_snHidden_accs_ = // open access
-		{ id : current.id
-		, prev : undefined
-		, root : struct
-		, hook : struct
-		, defs : {}
-		}
-	method(struct, argument[0])(argument[1]); // run {runner}
-	typeSet("temp-clear", current); // close access
+    if argument[0] {
+	    var current = snGroup();
+	    current.id = typeSet("temp-id");
+	    current.group = struct;
+	    typeSet("temp-push", current); // open access memory
+		struct.__devlocomotive_singletonTools_snHidden_accs_ = // open access work
+			{ id : current.id
+			, prev : undefined
+			, root : struct
+			, hook : struct
+			, defs : {}
+			}
+		method(struct, argument[1])(); // run {runner} with sn-interface
+		typeSet("temp-clear", current); // close access
+    } else method(struct, argument[1])(); // run {runner} without sn-interface
     return struct; // new singleton
 }
 
@@ -190,7 +191,7 @@ function snRunAccess() {
 		return self;
 	});
 	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
-		throw "\n\tsingletonTools:\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
+		throw "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
 			if (argument[0] != "") {
@@ -214,7 +215,7 @@ function snRunAccess() {
 /// @param [value] {any}
 function snRunDefault() {
 	if !variable_struct_exists(self, "__devlocomotive_singletonTools_snHidden_accs_") // used only when using <snRunner>
-		throw "\n\tsingletonTools:\n\tno automatic access was granted. (auto access is provided by the <snRunner> function, only for the duration of this function)\n\n";
+		throw "\n\tsingletonTools:\n\tinterface sn-interface is not available\n\n";
 	if (argument_count == 0) {
 		self.__devlocomotive_singletonTools_snHidden_accs_.defs = {}; // remove all value-default
 		exit;
@@ -222,7 +223,7 @@ function snRunDefault() {
 	if !is_string(argument[0]) or (argument[0] == "") throw "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
 	if (argument_count > 1)
 		variable_struct_set(self.__devlocomotive_singletonTools_snHidden_accs_.defs, argument[0], argument[1]); // set value-default
-	else {  
+	else {
 		// remove value-default
 		var defs = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
 		if variable_struct_exists(defs, argument[0]) variable_struct_remove(defs, argument[0]);
