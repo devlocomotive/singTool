@@ -118,3 +118,29 @@ function __glGrid() {
 //
 glGrid.set.w(10).h(10).add(9, 9, 100);
 show_message(glGrid.get.val(9, 9));
+
+// 3
+function __glInterface() {
+	static data = snRunner(true, function() {
+		with snGroup("a") {
+			with snGroup("a") {
+				with snGroup("a", true) {
+					self.hook = "yes";
+					with snGroup("a") {
+						with snGroup("a") {
+							with snGroup("a") {
+								self.hook = snRunAccess("hook");
+								show_message(self.hook.hook);
+							}
+						}
+					}
+				}
+			}
+		}
+	}, function() {
+		show_message("the end");
+	});
+}
+
+//
+__glInterface();

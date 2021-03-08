@@ -117,9 +117,9 @@ var struct = snRunner(true, function() {
 	assert(self == snRunAccess(0));
 	assert(self == snRunAccess(undefined));
 	assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
-	assert(___devlocomotive_singletonTools_snHidden_accs_.prev == undefined);
-	assert(___devlocomotive_singletonTools_snHidden_accs_.root == self);
-	assert(___devlocomotive_singletonTools_snHidden_accs_.hook == self);
+	assert(___devlocomotive_singletonTools_snHidden_accs_._prev == undefined);
+	assert(___devlocomotive_singletonTools_snHidden_accs_._root == self);
+	assert(___devlocomotive_singletonTools_snHidden_accs_._hook == self);
 	assert(undefined == snRunAccess(-1));
 	assert(undefined == snRunAccess(-1, 1));
 	assert(self == snRunAccess(-1, 0));
@@ -127,7 +127,7 @@ var struct = snRunner(true, function() {
 	assert(self == snRunAccess(-1, -10));
 	var _g1 = {};
 	snRunDefault("base", _g1);
-	var _g0 = ___devlocomotive_singletonTools_snHidden_accs_.defs;
+	var _g0 = ___devlocomotive_singletonTools_snHidden_accs_._defs;
 	var _i0 = self;
 	with snGroup("next") {
 		assert(is_snGroup(self));
@@ -138,7 +138,7 @@ var struct = snRunner(true, function() {
 		assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 		assert_has_key(self, "base");
 		assert(base == _g1);
-		var _g2 = ___devlocomotive_singletonTools_snHidden_accs_.defs;
+		var _g2 = ___devlocomotive_singletonTools_snHidden_accs_._defs;
 		assert_fail(_g0 == _g2);
 		assert_equal(_g0, _g2);
 		assert(other == _i0);
