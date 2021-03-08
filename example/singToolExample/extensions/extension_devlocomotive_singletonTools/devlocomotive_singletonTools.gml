@@ -4,7 +4,7 @@
     version         \\ 100
     autor           \\ devlocomotive
     data-create     \\ 02.03.21
-    data-updata     \\ 07.03.21
+    data-updata     \\ 08.03.21
 */
 
 /* link
@@ -27,37 +27,37 @@
 	if (argument_count == 0)
 		return new __devlocomotive_singletonTools_snHidden_f_construct(); // [arg 0] just return new group
 	else {
-		var key = argument[0];
-		if !is_string(key) or (key == "") throw "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
+		var __key = argument[0];
+		if !is_string(__key) or (__key == "") throw "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n"; // check argument {key} is correct
 	}
-	var target = self;
-    if variable_struct_exists(target, key) throw "\n\tsingletonTools:\n\tkey is busy\n\n"; // check argument {key} is no busy
-    var news = new __devlocomotive_singletonTools_snHidden_f_construct();
-    if is_snGroup(target) and variable_struct_exists(target, "__devlocomotive_singletonTools_snHidden_accs_") { // if used <sn-interface> -> create access
-    	var defs_loc = target.__devlocomotive_singletonTools_snHidden_accs_.defs;
-    	var names = variable_struct_get_names(defs_loc), i = 0, defs_new = {}, defs_key, val;
-    	repeat array_length(names) { // used <snRunDefault> mechanism
-    		defs_key = names[i++];
-    		if (string_pos("__devlocomotive_singletonTools_snHidden_", defs_key) == 1) continue; // exeption keys
-    		val = variable_struct_get(defs_loc, defs_key);
-    		variable_struct_set(news, defs_key, val);
-	    	variable_struct_set(defs_new, defs_key, val);
+	var __target = self;
+    if variable_struct_exists(__target, __key) throw "\n\tsingletonTools:\n\tkey is busy\n\n"; // check argument {key} is no busy
+    var __new_group = new __devlocomotive_singletonTools_snHidden_f_construct();
+    if is_snGroup(__target) and variable_struct_exists(__target, "__devlocomotive_singletonTools_snHidden_accs_") { // if used <sn-interface> -> create access
+    	var __defs_loc = __target.__devlocomotive_singletonTools_snHidden_accs_.defs, __defs_new = {}, __defs_key;
+    	var __names = variable_struct_get_names(__defs_loc), i = 0, __val;
+    	repeat array_length(__names) { // used <snRunDefault> mechanism
+    		__defs_key = __names[i++];
+    		if (string_pos("__devlocomotive_singletonTools_snHidden_", __defs_key) == 1) continue; // exeption keys
+    		__val = variable_struct_get(__defs_loc, __defs_key);
+    		variable_struct_set(__new_group, __defs_key, __val);
+	    	variable_struct_set(__defs_new, __defs_key, __val);
     	}
-    	var root = target.__devlocomotive_singletonTools_snHidden_accs_.root;
-    	news.__devlocomotive_singletonTools_snHidden_accs_ = // access create
-    		{ prev : target
-    		, root : root
-    		, hook : (argument_count > 1 ? argument[1] : false) ? news : target.__devlocomotive_singletonTools_snHidden_accs_.hook
-    		, defs : defs_new // new default for independent inheritance
+    	var __root = __target.__devlocomotive_singletonTools_snHidden_accs_.root;
+    	__new_group.__devlocomotive_singletonTools_snHidden_accs_ = // access create
+    		{ prev : __target
+    		, root : __root
+    		, hook : (argument_count > 1 ? argument[1] : false) ? __new_group : __target.__devlocomotive_singletonTools_snHidden_accs_.hook
+    		, defs : __defs_new // new default for independent inheritance
     		}
-    	var access_clear = new __devlocomotive_singletonTools_snHidden_f_construct();
-    	access_clear.__devlocomotive_singletonTools_snHidden_type_ = "temp-push";
-    	access_clear.id = root.__devlocomotive_singletonTools_snHidden_accs_.id;
-    	access_clear.group = news;
-    	snCleaner(access_clear); // access-clear memory
+    	var __access_clear = new __devlocomotive_singletonTools_snHidden_f_construct();
+    	__access_clear.__devlocomotive_singletonTools_snHidden_type_ = "temp-push";
+    	__access_clear.id = __root.__devlocomotive_singletonTools_snHidden_accs_.id;
+    	__access_clear.group = __new_group;
+    	snCleaner(__access_clear); // access-clear memory
     }
-    variable_struct_set(target, key, news); // set a key in current struct
-    return news; // return new group
+    variable_struct_set(__target, __key, __new_group); // set a key in current struct
+    return __new_group; // return new group
 }
 
 #define is_snGroup
@@ -68,42 +68,42 @@
 
 #define snRunner
 {
-	static __devlocomotive_singletonTools_snHidden_f_typeSet = method_get_index(function(type, data) {
-		if !is_snGroup(data) {
-			var read = data;
-			data = snGroup();
-			if is_struct(read) {
-				var names = variable_struct_get_names(read), i = 0, key;
-				repeat array_length(names) {
-					key = names[i++];
-					variable_struct_set(data, key, variable_struct_get(read, key));
+	static __devlocomotive_singletonTools_snHidden_f_typeSet = method_get_index(function(__type, __data) {
+		if !is_snGroup(__data) {
+			var __read = __data;
+			__data = snGroup();
+			if is_struct(__read) {
+				var __names = variable_struct_get_names(__read), i = 0, __key;
+				repeat array_length(__names) {
+					__key = __names[i++];
+					variable_struct_set(__data, __key, variable_struct_get(__read, __key));
 				}
 			}
 		}
-		data.__devlocomotive_singletonTools_snHidden_type_ = type;
-		return snCleaner(data);
+		__data.__devlocomotive_singletonTools_snHidden_type_ = __type;
+		return snCleaner(__data);
 	});
-	var struct = snGroup(), cleaner = argument_count > 2 ? argument[2] : undefined;
-    if is_method(cleaner)
-    	__devlocomotive_singletonTools_snHidden_f_typeSet("cleaner", {run : method(struct, cleaner)}); // method cleaner
-    else if is_string(cleaner) and (cleaner != "")
-	    __devlocomotive_singletonTools_snHidden_f_typeSet("cleaner", {struct : struct, name : cleaner}); // field cleaner
+	var __struct = snGroup(), __cleaner = argument_count > 2 ? argument[2] : undefined;
+    if is_method(__cleaner)
+    	__devlocomotive_singletonTools_snHidden_f_typeSet("cleaner", {run : method(__struct, __cleaner)}); // method cleaner
+    else if is_string(__cleaner) and (__cleaner != "")
+	    __devlocomotive_singletonTools_snHidden_f_typeSet("cleaner", {struct : __struct, name : __cleaner}); // field cleaner
     if argument[0] {
-	    var current = snGroup();
-	    current.id = __devlocomotive_singletonTools_snHidden_f_typeSet("temp-id");
-	    current.group = struct;
-	    __devlocomotive_singletonTools_snHidden_f_typeSet("temp-push", current); // open access memory
-		struct.__devlocomotive_singletonTools_snHidden_accs_ = // open access work
-			{ id : current.id
+	    var __current = snGroup();
+	    __current.id = __devlocomotive_singletonTools_snHidden_f_typeSet("temp-id");
+	    __current.group = __struct;
+	    __devlocomotive_singletonTools_snHidden_f_typeSet("temp-push", __current); // open access memory
+		__struct.__devlocomotive_singletonTools_snHidden_accs_ = // open access work
+			{ id : __current.id
 			, prev : undefined
-			, root : struct
-			, hook : struct
+			, root : __struct
+			, hook : __struct
 			, defs : {}
 			}
-		method(struct, argument[1])(); // run {runner} with <sn-interface>
-		__devlocomotive_singletonTools_snHidden_f_typeSet("temp-clear", current); // close access
-    } else method(struct, argument[1])(); // run {runner} without <sn-interface>
-	return struct; // new singleton
+		method(__struct, argument[1])(); // run {runner} with <sn-interface>
+		__devlocomotive_singletonTools_snHidden_f_typeSet("temp-clear", __current); // close access
+    } else method(__struct, argument[1])(); // run {runner} without <sn-interface>
+	return __struct; // new singleton
 }
 
 #define snCleaner
@@ -118,16 +118,16 @@
     				array_push(__devlocomotive_singletonTools_snHidden_d_stackCleaner, argument[0]);
     				break;
     			case "temp-id":
-    				var new_id = string(variable_struct_names_count(__devlocomotive_singletonTools_snHidden_d_stackTemp));
-    				variable_struct_set(__devlocomotive_singletonTools_snHidden_d_stackTemp, new_id, []);
-    				return new_id;
+    				var __new_id = string(variable_struct_names_count(__devlocomotive_singletonTools_snHidden_d_stackTemp));
+    				variable_struct_set(__devlocomotive_singletonTools_snHidden_d_stackTemp, __new_id, []);
+    				return __new_id;
     				break;
     			case "temp-push":
     				array_push(variable_struct_get(__devlocomotive_singletonTools_snHidden_d_stackTemp, argument[0].id), argument[0].group);
     				break;
     			case "temp-clear":
-    				var stack_group = variable_struct_get(__devlocomotive_singletonTools_snHidden_d_stackTemp, argument[0].id), i = 0;
-    				repeat array_length(stack_group) variable_struct_remove(stack_group[i++], "__devlocomotive_singletonTools_snHidden_accs_");
+    				var __stack_group = variable_struct_get(__devlocomotive_singletonTools_snHidden_d_stackTemp, argument[0].id), i = 0;
+    				repeat array_length(__stack_group) variable_struct_remove(__stack_group[i++], "__devlocomotive_singletonTools_snHidden_accs_");
     				variable_struct_remove(__devlocomotive_singletonTools_snHidden_d_stackTemp, argument[0].id);
     				break;
     		}
@@ -135,15 +135,15 @@
     	}
     }
     if is_undefined(__devlocomotive_singletonTools_snHidden_d_stackCleaner) throw "\n\tsingletonTools:\n\tthe application is assumed to be complete\n\n"; // if the 'stackCleaner' has already been used
-    var i = 0, run;
+    var i = 0, __run;
     repeat array_length(__devlocomotive_singletonTools_snHidden_d_stackCleaner) {
-    	run = __devlocomotive_singletonTools_snHidden_d_stackCleaner[i++];
-    	if variable_struct_exists(run, "run")
-    		run.run(); // used method
+    	__run = __devlocomotive_singletonTools_snHidden_d_stackCleaner[i++];
+    	if variable_struct_exists(__run, "run")
+    		__run.run(); // used method
     	else { // used field struct
-    		if !variable_struct_exists(run.struct, run.name) throw ("\n\tsingletonTools:\n\tthere is no key '" + run.name + "' in the group\n\n"); // if field not exists
-        	var get = variable_struct_get(run.struct, run.name);
-        	if !is_undefined(get) with run get();
+    		if !variable_struct_exists(__run.struct, __run.name) throw ("\n\tsingletonTools:\n\tthere is no key '" + __run.name + "' in the group\n\n"); // if field not exists
+        	var __field_run = variable_struct_get(__run.struct, __run.name);
+        	if !is_undefined(__field_run) with __run __field_run();
     	}
     }
 	__devlocomotive_singletonTools_snHidden_d_stackCleaner = undefined; // clear 'stackCleaner'
@@ -151,14 +151,14 @@
 
 #define snRunAccess
 {
-	static __devlocomotive_singletonTools_snHidden_f_getPrevious = method_get_index(function(count) { // previous-level get
-		if (count >= 1) {
-			var root = self.__devlocomotive_singletonTools_snHidden_accs_.prev;
-			repeat (count - 1) {
-				if is_undefined(root) throw "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n"; // if current group is root
-				root = root.__devlocomotive_singletonTools_snHidden_accs_.prev;
+	static __devlocomotive_singletonTools_snHidden_f_getPrevious = method_get_index(function(__count) { // previous-level get
+		if (__count >= 1) {
+			var __root = self.__devlocomotive_singletonTools_snHidden_accs_.prev;
+			repeat (__count - 1) {
+				if is_undefined(__root) throw "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n"; // if current group is root
+				__root = __root.__devlocomotive_singletonTools_snHidden_accs_.prev;
 			}
-			return root;
+			return __root;
 		}
 		return self;
 	});
@@ -194,7 +194,7 @@
 		variable_struct_set(self.__devlocomotive_singletonTools_snHidden_accs_.defs, argument[0], argument[1]); // set value-default
 	else {
 		// remove value-default
-		var defs = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
-		if variable_struct_exists(defs, argument[0]) variable_struct_remove(defs, argument[0]);
+		var __defs = self.__devlocomotive_singletonTools_snHidden_accs_.defs;
+		if variable_struct_exists(__defs, argument[0]) variable_struct_remove(__defs, argument[0]);
 	}
 }
