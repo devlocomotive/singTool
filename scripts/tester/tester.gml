@@ -116,10 +116,10 @@ var struct = snRunner(true, function() {
 	assert(self == snRunAccess("r"));
 	assert(self == snRunAccess(0));
 	assert(self == snRunAccess(undefined));
-	assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
-	assert(__devlocomotive_singletonTools_snHidden_accs_.prev == undefined);
-	assert(__devlocomotive_singletonTools_snHidden_accs_.root == self);
-	assert(__devlocomotive_singletonTools_snHidden_accs_.hook == self);
+	assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
+	assert(___devlocomotive_singletonTools_snHidden_accs_.prev == undefined);
+	assert(___devlocomotive_singletonTools_snHidden_accs_.root == self);
+	assert(___devlocomotive_singletonTools_snHidden_accs_.hook == self);
 	assert(undefined == snRunAccess(-1));
 	assert(undefined == snRunAccess(-1, 1));
 	assert(self == snRunAccess(-1, 0));
@@ -127,7 +127,7 @@ var struct = snRunner(true, function() {
 	assert(self == snRunAccess(-1, -10));
 	var _g1 = {};
 	snRunDefault("base", _g1);
-	var _g0 = __devlocomotive_singletonTools_snHidden_accs_.defs;
+	var _g0 = ___devlocomotive_singletonTools_snHidden_accs_.defs;
 	var _i0 = self;
 	with snGroup("next") {
 		assert(is_snGroup(self));
@@ -135,10 +135,10 @@ var struct = snRunner(true, function() {
 		assert(other == snRunAccess("r"));
 		assert(other == snRunAccess(0));
 		assert(other == snRunAccess(undefined));
-		assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+		assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 		assert_has_key(self, "base");
 		assert(base == _g1);
-		var _g2 = __devlocomotive_singletonTools_snHidden_accs_.defs;
+		var _g2 = ___devlocomotive_singletonTools_snHidden_accs_.defs;
 		assert_fail(_g0 == _g2);
 		assert_equal(_g0, _g2);
 		assert(other == _i0);
@@ -163,7 +163,7 @@ var struct = snRunner(true, function() {
 		snRunDefault("base");
 		var _i1 = self;
 		with snGroup("a") {
-			assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+			assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 			assert(other == _i1);
 			assert(other == snRunAccess("previous"));
 			assert(other == snRunAccess("p"));
@@ -191,7 +191,7 @@ var struct = snRunner(true, function() {
 			assert(name == "NamedWow");
 		}
 		with snGroup("b") {
-			assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+			assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 			assert(other == _i1);
 			assert(other == snRunAccess("previous"));
 			assert(other == snRunAccess("p"));
@@ -261,7 +261,7 @@ var struct = snRunner(true, function() {
 				with snGroup("a", true) {
 					var _i01 = self;
 					with snGroup("a") {
-						assert_has_key(self, "__devlocomotive_singletonTools_snHidden_accs_");
+						assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 						assert_has_key(self, "name");
 						assert(name == "NamedWow");
 						assert(_i01 == other);
@@ -332,14 +332,14 @@ snRunner(false, function() {
 //
 var struct3 = snRunner(true, function() {
 	out = snGroup();
-	out.__devlocomotive_singletonTools_snHidden_accs_ = "test";
+	out.___devlocomotive_singletonTools_snHidden_accs_ = "test";
 	assert_throws([snRunDefault, ""], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
 	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
-	snRunDefault("__devlocomotive_singletonTools_snHidden_test", self);
+	snRunDefault("___devlocomotive_singletonTools_snHidden_test", self);
 	with snGroup("test") {
-		assert_doesnt_have_key(self, "__devlocomotive_singletonTools_snHidden_test");
+		assert_doesnt_have_key(self, "___devlocomotive_singletonTools_snHidden_test");
 		with snGroup("test") {
-			assert_doesnt_have_key(self, "__devlocomotive_singletonTools_snHidden_test");
+			assert_doesnt_have_key(self, "___devlocomotive_singletonTools_snHidden_test");
 		}
 	}
 });
@@ -387,22 +387,22 @@ function groupDontHaveKeys(struct, keys) {
 }
 
 //
-assert(groupDontHaveKeys(struct, "__devlocomotive_singletonTools_snHidden_accs_"));
-struct.next.a._a.__devlocomotive_singletonTools_snHidden_accs_ = "test";
-assert_fail(groupDontHaveKeys(struct, "__devlocomotive_singletonTools_snHidden_accs_"));
+assert(groupDontHaveKeys(struct, "___devlocomotive_singletonTools_snHidden_accs_"));
+struct.next.a._a.___devlocomotive_singletonTools_snHidden_accs_ = "test";
+assert_fail(groupDontHaveKeys(struct, "___devlocomotive_singletonTools_snHidden_accs_"));
 
 //
-assert(groupDontHaveKeys(struct2, "__devlocomotive_singletonTools_snHidden_accs_"));
-assert_doesnt_have_key(struct2, "__devlocomotive_singletonTools_snHidden_accs_");
+assert(groupDontHaveKeys(struct2, "___devlocomotive_singletonTools_snHidden_accs_"));
+assert_doesnt_have_key(struct2, "___devlocomotive_singletonTools_snHidden_accs_");
 
 //
-assert_fail(groupDontHaveKeys(struct3, "__devlocomotive_singletonTools_snHidden_accs_"));
+assert_fail(groupDontHaveKeys(struct3, "___devlocomotive_singletonTools_snHidden_accs_"));
 
 //
 assert_fail(find(struct));
 assert_fail(find(struct.next));
-assert_doesnt_have_key(struct, "__devlocomotive_singletonTools_snHidden_accs_");
-assert_doesnt_have_key(struct.next, "__devlocomotive_singletonTools_snHidden_accs_");
+assert_doesnt_have_key(struct, "___devlocomotive_singletonTools_snHidden_accs_");
+assert_doesnt_have_key(struct.next, "___devlocomotive_singletonTools_snHidden_accs_");
 
 //
 snCleaner();
