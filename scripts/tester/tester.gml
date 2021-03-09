@@ -187,6 +187,7 @@ var struct = snRunner(true, function() {
 				assert_doesnt_have_key(self, "base");
 				assert_has_key(self, "name");
 				assert(name == "NamedNews");
+				assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 			}
 			assert(name == "NamedWow");
 		}
@@ -335,13 +336,7 @@ var struct3 = snRunner(true, function() {
 	out.___devlocomotive_singletonTools_snHidden_accs_ = "test";
 	assert_throws([snRunDefault, ""], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
 	assert_throws([snRunDefault, undefined], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
-	snRunDefault("___devlocomotive_singletonTools_snHidden_test", self);
-	with snGroup("test") {
-		assert_doesnt_have_key(self, "___devlocomotive_singletonTools_snHidden_test");
-		with snGroup("test") {
-			assert_doesnt_have_key(self, "___devlocomotive_singletonTools_snHidden_test");
-		}
-	}
+	assert_throws([snRunDefault, "___devlocomotive_singletonTools_snHidden_test"], "\n\tyou cannot use the '___devlocomotive_singletonTools_snHidden_' prefix in the field name\n\n");
 });
 
 //
