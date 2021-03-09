@@ -332,6 +332,10 @@ snRunner(false, function() {
 
 //
 var struct3 = snRunner(true, function() {
+	snRunCoder(10, function(){show_message("3")});
+	snRunCoder(10, function(){show_message("1")});
+	snRunCoder(10, function(){show_message("2")});
+	snRunCoder(-100, function(){show_message("-100")});
 	out = snGroup();
 	out.___devlocomotive_singletonTools_snHidden_accs_ = "test";
 	assert_throws([snRunDefault, ""], "\n\tsingletonTools:\n\tthe key must be a string and contain at least one character\n\n");
