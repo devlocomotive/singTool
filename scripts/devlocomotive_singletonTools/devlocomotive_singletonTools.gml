@@ -4,7 +4,7 @@
     version         \\ 101
     autor           \\ devlocomotive
     data-create     \\ 02.03.21
-    data-updata     \\ 09.03.21
+    data-updata     \\ 10.03.21
 */
 
 /* link
@@ -341,6 +341,9 @@ function snRunCoder() {
 
 
 
+/// @function snCodAccess([rootOrCurrent]);
+/// @description
+/// @param [rootOrCurrent] {bool}
 function snCodAccess() {
 	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_code_") // used only when using <sn-interface>
 		throw "\n\tsingletonTools:\n\tinterface <sn-interface-code> is not available\n\n";
@@ -348,6 +351,10 @@ function snCodAccess() {
 }
 
 
+/// @function snRunRemove();
+/// @description
+/// @param key	  {string}
+/// @param remove {bool}
 function snRunRemove() {
 	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // used only when using <sn-interface>
 		throw "\n\tsingletonTools:\n\tinterface <sn-interface> is not available\n\n";
