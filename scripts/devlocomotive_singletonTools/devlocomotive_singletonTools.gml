@@ -139,7 +139,7 @@ function snRunner() {
 				_ccid = _stack_ccid[++i];
 				_method = _ccid._data_met;
 				_space = method_get_self(_method);
-				_code_interface._curr = _ccid.data_grp;
+				_code_interface._curr = _ccid._data_grp;
 				_space.___devlocomotive_singletonTools_snHidden_code_ = _code_interface; // sn-interface-code create
 				_method(); // run <snRunCoder>
 				variable_struct_remove(_space, "___devlocomotive_singletonTools_snHidden_code_"); // sn-interface-code remove
@@ -302,7 +302,7 @@ function snRunCoder() {
 	if variable_struct_exists(_space, _key)
 		_space = variable_struct_get(_space, _key);
 	else {
-		var _temp = _space; _space = {};
+		var _temp = _space; _space = snGroup();
 		variable_struct_set(_temp, _key, _space);
 	}
 	var _target = self;
