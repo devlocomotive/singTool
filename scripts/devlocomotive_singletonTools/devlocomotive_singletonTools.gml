@@ -4,7 +4,7 @@
     version         \\ 101
     autor           \\ devlocomotive
     data-create     \\ 02.03.21
-    data-updata     \\ 10.03.21
+    data-updata     \\ 11.03.21
 */
 
 /* link
@@ -67,6 +67,7 @@ function snGroup() {
     		, _hook : (argument_count > 1 ? argument[1] : false) ? _new_group : _target_access._hook
     		, _defs : _defs_new // new default for independent inheritance
     		, _rmmv : {} //
+    		, _ccth : false
     		}
     	array_push(_root.___devlocomotive_singletonTools_snHidden_accs_._stck, _new_group); // access-clear memory
     }
@@ -105,81 +106,101 @@ function snRunner() {
 		}
 		return _ccid0._lid - _ccid1._lid;
 	});
-	var _struct = snGroup();
+	var _singleton = snGroup();
 	var _cleaner = argument_count > 2 ? argument[2] : undefined, _cleaner_data = snGroup();
     if is_method(_cleaner)
-    	_cleaner_data.___devlocomotive_singletonTools_snHidden_type_ = {_run : method(_struct, _cleaner)}; // method cleaner
+    	_cleaner_data.___devlocomotive_singletonTools_snHidden_type_ = {_run : method(_singleton, _cleaner)}; // method cleaner
     else if is_string(_cleaner) and (_cleaner != "")
-	    _cleaner_data.___devlocomotive_singletonTools_snHidden_type_ = {_struct : _struct, _name : _cleaner}; // field cleaner
+	    _cleaner_data.___devlocomotive_singletonTools_snHidden_type_ = {_singleton : _singleton, _name : _cleaner}; // field cleaner
 	if variable_struct_names_count(_cleaner_data) snCleaner(_cleaner_data);
     if argument[0] {
-	    var _current = snGroup();
-	    var _stack = [_struct];
-	    var _stack_ccid = [];
-		_struct.___devlocomotive_singletonTools_snHidden_accs_ = // open access work
-			{ _id : [0, 0] // unique id : [did, gid] - [did - depthIndex, gid - groupIndex]
-			, _count_gid : 0 // counter - groupIndex
-			, _count_cid : 0 // counter - codeQueue
-			, _stck : _stack // all stack groupInterface
-			, _prev : undefined // snRunAccess - previous
-			, _root : _struct   // snRunAccess - *root
-			, _hook : _struct   // snRunAccess - hook
-			, _defs : {} // snRunDefault
-			, _mark : {} // snRunMarker
-			, _ccid : _stack_ccid // snRunCoder {lid, did, gid, cid, data_grp, data_met} - {lid - level, did - depthIndex, gid - groupIndex, cid - codeQueue, data_grp - struct, data_met - method}
-			, _sppc : {} // snRunCoder - codeSpace
-			, _rmmv : {} // snRunRemove
-			}
-		with _struct method(_struct, argument[1])(); // run {runner} with <sn-interface>
-		var _i = -1, _size = array_length(_stack_ccid), _stack_rmmv = [], _val;
-		repeat array_length(_stack) {
-			_val = _stack[++_i].___devlocomotive_singletonTools_snHidden_accs_._rmmv;
-			if variable_struct_names_count(_val) array_push(_stack_rmmv, [_stack[_i], _val]);
-			variable_struct_remove(_stack[_i], "___devlocomotive_singletonTools_snHidden_accs_"); // close access
-		}
+    	var _temp_stack = [];
+    	var _temp_stack_ccid = [];
+    	var _temp_stack_code = [];
+	    var _tempSingleton =			
+	    	{ _count_cid : 0				// 
+	    	, _root : _singleton			// 
+	    	, _stck : _temp_stack			// 
+	    	, _ccid : _temp_stack_ccid		// 
+	    	, _mark : {}					// 
+	    	, _sppc : {}					//
+	    	} // data general for <interface-sn-run>
+	   	var _tempCoder =
+			{ _root : _singleton			//
+			, _mark : _tempSingleton._mark	//
+			} // data general for <interface-sn-code>
+		_singleton.___devlocomotive_singletonTools_snHidden_accs_ =
+			{ _id : [0, 0]					// unique id : [did, gid] - [did - depthIndex, gid - groupIndex]
+			, _count_gid : 0				// counter - groupIndex
+			, _ccth : false         		// 
+			, _prev : undefined 			// snRunAccess - previous
+			, _hook : _singleton			// snRunAccess - hook
+			, _defs : {}					// snRunDefault
+			, _rmmv : {}					// snRCRemove
+			, _temp : _tempSingleton		// 
+			} // data union + open interface
+		if (is_numeric(argument[1]) and !script_exists(argument[1])) or !is_method(argument[1]) or !script_exists(method_get_index(argument[1]))
+			throw "\n\tsingletonTools:\n\tthe {runner} must be an existing function\n\n"; //
+		with _singleton method(_singleton, argument[1])(); // run {runner} with <sn-interface>
+		var _i, _size, _value;
+		//
+		_size = array_length(_temp_stack);
 		if _size {
-			var _method, _ccid, _interface, _group, _code_stack = []; _i = -1;
-			array_sort(_stack_ccid, ___devlocomotive_singletonTools_snHidden_f_sorting); // sorting <snRunCoder>
-			repeat _size {
-				_ccid = _stack_ccid[++_i];
-				_group = _ccid._data_grp;
-				if !variable_struct_exists(_group, "___devlocomotive_singletonTools_snHidden_code_") {
-					_interface = // sn-interface-code create
-						{ _enable : true
-						, _root : _struct
-						, _spac : _ccid._data_spc
-						, _rmmv : {}
-						}
-					_group.___devlocomotive_singletonTools_snHidden_code_ = _interface;
-					array_push(_code_stack, _group);
-				} else {
-					_interface = variable_struct_get(_group, "___devlocomotive_singletonTools_snHidden_code_");
-					_interface._enable = true; // enable sn-interface-code
-				}
-				with _ccid._data_spc method(_group, _ccid._data_cod)(); // run <snRunCoder>
-				_interface._enable = false; // disable sn-interface-code
-			}
 			_i = -1;
-			repeat array_length(_code_stack) {
-				_val = _code_stack[++_i].___devlocomotive_singletonTools_snHidden_accs_._rmmv;
-				if variable_struct_names_count(_val) array_push(_stack_rmmv, [_code_stack[_i], _val]);
-				variable_struct_remove(_code_stack[_i], "___devlocomotive_singletonTools_snHidden_code_");
+			while (++_i < _size) {
+				_value = _temp_stack[_i].___devlocomotive_singletonTools_snHidden_accs_;
+				if _value._ccth {
+					_temp_stack[_i].___devlocomotive_singletonTools_snHidden_code_ =
+						{ _enable : false
+						, _rmmv : _value._rmmv
+						, _temp : _tempCoder
+						}
+					array_push(_temp_stack_code, _temp_stack[_i]);
+				}
+				_temp_stack[_i] =
+					{ _self : _temp_stack[_i]
+					, _rmmv : _value._rmmv
+					}
+				variable_struct_remove(_temp_stack[_i]._self, "___devlocomotive_singletonTools_snHidden_accs_"); // close access
 			}
 		}
-		_size = array_length(_stack_rmmv);
+		//
+		_size = array_length(_temp_stack_ccid);
 		if _size {
-			var _j, _names, _key; _i = -1;
-			repeat _size {
-				_val = _stack_rmmv[++_i];
-				_j = -1; _names = variable_struct_get_names(_val[1]); _val = _val[0];
-				repeat array_length(_names) {
-					_key = _names[++_j];
-					if variable_struct_exists(_val, _key) variable_struct_remove(_val, _key);
+			_i = -1;
+			array_sort(_temp_stack_ccid, ___devlocomotive_singletonTools_snHidden_f_sorting); // sorting <snRunCoder>
+			var _interface, _ccid_pack;
+			while (++_i < _size) {
+				_ccid_pack = _temp_stack_ccid[_i];
+				_interface = variable_struct_get(_ccid_pack.data_grp, "___devlocomotive_singletonTools_snHidden_code_");
+				_interface._enable = true;
+				with _ccid_pack._data_spc method(_ccid_pack.data_grp, _ccid_pack._data_cod)(); // run <snRunCoder>
+				_interface._enable = false;
+			}
+			_size = array_length(_temp_stack_code); _i = -1;
+			while (++_i < _size) variable_struct_remove(_temp_stack_code[_i], "___devlocomotive_singletonTools_snHidden_code_");
+		}
+		//
+		_size = array_length(_temp_stack);
+		if _size {
+			_i = -1;
+			var _j, _temp_stack_rmmv, _subsize, _key;
+			while (++_i < _size) {
+				_value = _temp_stack[_i];
+				_temp_stack_rmmv = variable_struct_get_names(_value._rmmv);
+				_subsize = array_length(_subsize);
+				if _subsize {
+					_j = -1;
+					_value = _value._self;
+					while (++_j < _subsize) {
+						_key = _temp_stack_rmmv[_j];
+						if variable_struct_exists(_value, _key) variable_struct_remove(_value, _key);
+					}
 				}
 			}
 		}
-    } else with _struct method(_struct, argument[1])(); // run {runner} without <sn-interface>
-	return _struct; // new singleton
+    } else with _singleton method(_singleton, argument[1])(); // run {runner} without <sn-interface>
+	return _singleton; // new singleton
 }
 
 /// @function snCleaner();
@@ -201,9 +222,9 @@ function snCleaner() {
     	if variable_struct_exists(_run, "_run")
     		_run._run(); // used method
     	else { // used field struct
-    		if !variable_struct_exists(_run._struct, _run._name) 
+    		if !variable_struct_exists(_run._singleton, _run._name) 
     			throw ("\n\tsingletonTools:\n\tthere is no key '" + _run._name + "' in the group\n\n"); // if field not exists
-        	var _field_run = variable_struct_get(_run._struct, _run._name);
+        	var _field_run = variable_struct_get(_run._singleton, _run._name);
         	if !is_undefined(_field_run) with _run _field_run();
     	}
     }
@@ -333,8 +354,9 @@ function snRunCoder() {
 		throw "\n\tsingletonTools:\n\tthe {spacename} must be a string and contain at least one character\n\n"; // checks that the {spacename} has at least one character
 	if (is_numeric(argument2) and !script_exists(argument2)) or !is_method(argument2) or !script_exists(method_get_index(argument2)) // addition - script_exists(method_get_index(argument2)) - yes it's fantastic
 		throw "\n\tsingletonTools:\n\tthe {methOrFunct} must be an existing function\n\n"; // check if the function exists
-	var _access_id = self.___devlocomotive_singletonTools_snHidden_accs_, 
-		_root_access = _access_id._root.___devlocomotive_singletonTools_snHidden_accs_; _access_id = _access_id._id; // access
+	var _access_id = self.___devlocomotive_singletonTools_snHidden_accs_, _root_access = _access_id._root.___devlocomotive_singletonTools_snHidden_accs_; 
+	_access_id._ccth = true;
+	_access_id = _access_id._id; // access
 	var _space = _root_access._sppc, _key = string(argument0);
 	if variable_struct_exists(_space, _key)
 		_space = variable_struct_get(_space, _key); // get the existing space
