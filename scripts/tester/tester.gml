@@ -9,6 +9,9 @@ var test =
 test.current = test.main;
 
 //
+show_message(method_get_index(method(undefined, 10))())
+
+//
 show_debug_message("\n\tTester\n");
 
 //
