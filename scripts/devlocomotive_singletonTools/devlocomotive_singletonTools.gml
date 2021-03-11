@@ -237,17 +237,17 @@ function snCleaner() {
 
 /// @function snRunAccess([-1#previous;1#hook;default#root], [<previous>-level]);
 /// @description -- used <sn-interface> --
-//				 snRunAccess(1) -> <hook>
-//				 snRunAccess("h" + "..any..") -> <hook>
-//				 snRunAccess(-1) -> <previous>-1.level
-//				 snRunAccess(-1, n < 1) -> <previous>-0.level (self)
-//				 snRunAccess(-1, n > 1) -> <previous>-n.level
-//  			 snRunAccess("p" + "..any..") -> <previous>-1.level
-//				 snRunAccess("p" + "..any..", n < 1) -> <previous>-0.level (self)
-//				 snRunAccess("p" + "..any..", n > 1) -> <previous>-n.level
-//				 other -> <root>
+//				 snRunAccess(1) -> 'hook'
+//				 snRunAccess("h" + "..any..") -> 'hook'
+//				 snRunAccess(-1) -> 'previous'.level[1] (other)
+//				 snRunAccess(-1, n < 1) -> 'previous'.level[0] (self)
+//				 snRunAccess(-1, n > 1) -> 'previous'.level[n]
+//  			 snRunAccess("p" + "..any..") -> 'previous'.level[1] (other)
+//				 snRunAccess("p" + "..any..", n < 1) -> 'previous'.level[0] (self)
+//				 snRunAccess("p" + "..any..", n > 1) -> 'previous'.level[n]
+//				 () -> 'root'
 /// @param [-1#previous;1#hook;default#root] {number/string}
-/// @param [<previous>-level]				   {count}
+/// @param [<previous>-level]				 {count}
 function snRunAccess() {
 	static ___devlocomotive_singletonTools_snHidden_f_getPrevious = method_get_index(function(_count) { // previous-level get
 		if (_count >= 1) {
@@ -357,27 +357,26 @@ function snRunCoder() {
 		throw "\n\tsingletonTools:\n\tthe {spacename} must be a string and contain at least one character\n\n"; // checks that the {spacename} has at least one character
 	if (is_numeric(argument2) and !script_exists(argument2)) or !is_method(argument2) or !script_exists(method_get_index(argument2))
 		throw "\n\tsingletonTools:\n\tthe {methOrFunct} must be an existing function\n\n"; // check if the function exists
-	var _id = self.___devlocomotive_singletonTools_snHidden_accs_, _interface = _id._temp; 
-	_id._ccth = true;
-	_id = _id._id; // access
-	var _spacename = _interface._sppc, _key = string(argument0);
-	if variable_struct_exists(_spacename, _key)
-		_spacename = variable_struct_get(_spacename, _key); // get the existing space
+	var _target = self, _target_interface = self.___devlocomotive_singletonTools_snHidden_accs_, _main_interface = _target_interface._temp; 
+	var _spacename = _main_interface._sppc, _id = string(argument0);
+	if variable_struct_exists(_spacename, _id)
+		_spacename = variable_struct_get(_spacename, _id); // get the existing space
 	else {
 		var _temp = _spacename; _spacename = snGroup();
-		variable_struct_set(_temp, _key, _spacename); // creating a new space
+		variable_struct_set(_temp, _id, _spacename); // creating a new space
 	}
-	var _target = self;
+	_id = _target_interface._id;
+	_target_interface._ccth = true;
 	var _ccid =
 		{ _lid : argument0                  		// level-id
 		, _did : _id[0]								// depth-id
 		, _gid : _id[1]								// group-id
-		, _cid : _interface._count_cid++  			// queue-id
+		, _cid : _main_interface._count_cid++  		// queue-id
 		, _data_spc : _spacename					// spacename - {spacename}
 		, _data_grp : _target						// group - 'self'
 		, _data_cod : method_get_index(argument2)	// code - {methOrFunct}
 		}
-	array_push(_interface._ccid, _ccid); // add to the 'snRunCoder'.stack
+	array_push(_main_interface._ccid, _ccid); // add to the 'snRunCoder'.stack
 }
 
 /// @function snCodAccess([1#current;default#root]);
@@ -391,25 +390,25 @@ function snRunCoder() {
 /// @param [1#current;default#root] {number/string}
 /// @returns {snGroup}
 function snCodAccess() {
-	var _interface = undefined;
+	var _target_interface = undefined;
 	if variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_code_") {
-		_interface = self.___devlocomotive_singletonTools_snHidden_code_;
-		is_undefined(_interface._spac) _interface = undefined;
+		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
+		is_undefined(_target_interface._spac) _target_interface = undefined;
 	}
-	if is_undefined(_interface) // checks that the current interface is <interface-sn-code>
+	if is_undefined(_target_interface) // checks that the current interface is <interface-sn-code>
 		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
 			if (argument[0] != "") {
 				argument[0] = string_char_at(argument[0], 1); // char-code
-				if (argument[0] == "c") return _interface._spac; // return 'space'
+				if (argument[0] == "c") return _target_interface._spac; // return 'space'
 			}
 		} else if is_numeric(argument[0]) { // mode number
 			argument[0] = sign(argument[0]); // number-code
-		    if (argument[0] == 1)  return _interface._spac; // return 'space'
+		    if (argument[0] == 1)  return _target_interface._spac; // return 'space'
 		}
 	}
-    return _interface._temp._root; // default return 'root'
+    return _target_interface._temp._root; // default return 'root'
 }
 
 /// @function snRCRemove(key);
@@ -424,20 +423,20 @@ function snCodAccess() {
 /// @param key {string} - at least one character and no use prefix '___devlocomotive_singletonTools_snHidden_'
 /// @returns {void }
 function snRCRemove() {
-	var _interface = undefined;
+	var _target_interface = undefined;
 	if variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_")
-		_interface = self.___devlocomotive_singletonTools_snHidden_accs_;
+		_target_interface = self.___devlocomotive_singletonTools_snHidden_accs_;
 	else if variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_code_") {
-		_interface = self.___devlocomotive_singletonTools_snHidden_code_;
-		if is_undefined(_interface._spac) _interface = undefined;
+		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
+		if is_undefined(_target_interface._spac) _target_interface = undefined;
 	}
-	if is_undefined(_interface)
+	if is_undefined(_target_interface)
 		throw "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n"; // checks that the current interface is <interface-sn-run> or <interface-sn-code>
 	if !is_string(argument[0]) or (argument[0] == "")
 		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	if (string_pos("___devlocomotive_singletonTools_snHidden_", argument[0]) == 1)
 		throw "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n"; // checks that the prefix '___devlocomotive_singletonTools_snHidden_' is not used in the {key}
-	variable_struct_set(_interface._rmmv, argument[0], undefined); // marks the key
+	variable_struct_set(_target_interface._rmmv, argument[0], undefined); // marks the key
 }
 
 //////////////////////////////////////////////////////////////////////////////*/
