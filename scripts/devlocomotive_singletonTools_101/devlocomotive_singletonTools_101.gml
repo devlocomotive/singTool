@@ -50,7 +50,8 @@ function snGroup() {
 		if !is_string(_key) or !string_length(_key)
 			throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // check argument {key} is correct
 	}
-    if variable_struct_exists(self, _key) throw "\n\tsingletonTools:\n\tthe {key} is busy in current group\n\n"; // check argument {key} is no busy
+    if variable_struct_exists(self, _key) 
+    	throw "\n\tsingletonTools:\n\tthe {key} is busy in current group\n\n"; // check argument {key} is no busy
     var _group_new = new ___devlocomotive_singletonTools_snHidden_f_construct();
     if is_snGroup(self) and variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") { // if used <sn-interface> -> create access
     	var _target = self, _target_interface = _target.___devlocomotive_singletonTools_snHidden_accs_;
@@ -152,7 +153,7 @@ function snRunner() {
 			} // data unique + open interface
 		if (is_numeric(argument[1]) and !script_exists(argument[1])) or !is_method(argument[1]) or !script_exists(method_get_index(argument[1]))
 			throw "\n\tsingletonTools:\n\tthe {runner} must be an existing function\n\n"; //
-		with _singleton method(_singleton, argument[1])(); // run {runner} with <interface-sn-run>
+		with _singleton with _singleton method(undefined, argument[1])(); // run {runner} with <interface-sn-run>
 		var _i, _size, _value;
 		// stage 0
 		_size = array_length(_temp_stack);
@@ -210,7 +211,7 @@ function snRunner() {
 				}
 			}
 		}
-    } else with _singleton method(_singleton, argument[1])(); // run {runner} without <interface-sn-run>
+    } else with _singleton with _singleton method(undefined, argument[1])(); // run {runner} without <interface-sn-run>
 	return _singleton; // new singleton
 }
 
