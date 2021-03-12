@@ -130,6 +130,11 @@
 		return _a == _b;
 	}
 	
+	//
+	function gt(value) {
+		return value;
+	}
+	
 #endregion
 
 //
@@ -229,6 +234,7 @@ if (test.current == test.main) {
 		unthrower(snGroup, "k");
 		thrower(snGroup, "k");
 		thrower(snGroup, "k", "\n\tsingletonTools:\n\tthe {key} is busy in current group\n\n");
+		thrower(snGroup, "k", "\n\tsingletonTools:\n\tthe {key} is busy in current group\n\n");
 		
 		// runInterface
 		var runInterface = "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
@@ -299,11 +305,15 @@ if (test.current == test.main) {
 		stc = snRunner(true, function() {
 			
 			//
+			var _root = self;
+			
+			//
 			assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
 			assert(eqSpace(self, other));
 			assert(is_snGroup(self));
 			
 			//
+			assert(self == _root);
 			assert(self == snRunAccess());
 			assert(self == snRunAccess("root"));
 			assert(self == snRunAccess("r"));
@@ -339,7 +349,196 @@ if (test.current == test.main) {
 			thrower(snRunAccess, [-1, 4], "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n");
 			
 			//
+			with snGroup("next") {
+				
+				//
+				assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
+				assert(is_snGroup(self));
+				
+				//
+				assert(other == _root);
+				assert(other == snRunAccess());
+				assert(other == snRunAccess("root"));
+				assert(other == snRunAccess("r"));
+				assert(other == snRunAccess("rasdfsdf2"));
+				assert(other == snRunAccess("r3634t"));
+				assert(other == snRunAccess(0));
+				assert(other == snRunAccess(undefined));
+				assert(self.___devlocomotive_singletonTools_snHidden_accs_._prev == other);
+				assert(self.___devlocomotive_singletonTools_snHidden_accs_._temp._root == other);
+				assert(self.___devlocomotive_singletonTools_snHidden_accs_._hook == other);
+				assert(other == snRunAccess(-1));
+				assert(other == snRunAccess(-1, 1));
+				assert(self == snRunAccess(-1, 0));
+				assert(other == snRunAccess("p"));
+				assert(other == snRunAccess("p", 1));
+				assert(self == snRunAccess("p", 0));
+				assert(other == snRunAccess("pasdf"));
+				assert(other == snRunAccess("p23fqf", 1));
+				assert(self == snRunAccess("psf2", 0));
+				assert(other == snRunAccess(1));
+				assert(other == snRunAccess("hook"));
+				assert(other == snRunAccess("h"));
+				assert(other == snRunAccess("h23ffe23"));
+				assert(other == snRunAccess("h23t223"));
+				assert(other == snRunAccess(""));
+				assert(self == snRunAccess(-1, -1));
+				assert(self == snRunAccess(-1, -2));
+				assert(self == snRunAccess(-1, -3));
+				assert_equal(variable_struct_names_count(self), 1);
+			}
 			
+			//
+			snRunDefault("_nx");
+			snRunDefault("_nx");
+			snRunDefault("_bx", 100);
+			snRunDefault("_bx", 150);
+			snRunDefault("_bx");
+			snRunDefault("_dx", 100);
+			snRunDefault("_dx", 150);
+			
+			//
+			with snGroup("next2") {
+				
+				//
+				assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
+				assert(is_snGroup(self));
+				
+				//
+				assert(other == _root);
+				assert(other == snRunAccess());
+				assert(other == snRunAccess("root"));
+				assert(other == snRunAccess("r"));
+				assert(other == snRunAccess("rasdfsdf2"));
+				assert(other == snRunAccess("r3634t"));
+				assert(other == snRunAccess(0));
+				assert(other == snRunAccess(undefined));
+				assert(self.___devlocomotive_singletonTools_snHidden_accs_._prev == other);
+				assert(self.___devlocomotive_singletonTools_snHidden_accs_._temp._root == other);
+				assert(self.___devlocomotive_singletonTools_snHidden_accs_._hook == other);
+				assert(other == snRunAccess(-1));
+				assert(other == snRunAccess(-1, 1));
+				assert(self == snRunAccess(-1, 0));
+				assert(other == snRunAccess("p"));
+				assert(other == snRunAccess("p", 1));
+				assert(self == snRunAccess("p", 0));
+				assert(other == snRunAccess("pasdf"));
+				assert(other == snRunAccess("p23fqf", 1));
+				assert(self == snRunAccess("psf2", 0));
+				assert(other == snRunAccess(1));
+				assert(other == snRunAccess("hook"));
+				assert(other == snRunAccess("h"));
+				assert(other == snRunAccess("h23ffe23"));
+				assert(other == snRunAccess("h23t223"));
+				assert(other == snRunAccess(""));
+				assert(self == snRunAccess(-1, -1));
+				assert(self == snRunAccess(-1, -2));
+				assert(self == snRunAccess(-1, -3));
+				assert_equal(variable_struct_names_count(self), 2);
+				
+				//
+				assert_has_key(self, "_dx");
+				assert_equal(self._dx, 150);
+				
+				//
+				with snGroup("next") {
+					
+					//
+					assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
+					assert(is_snGroup(self));
+					
+					//
+					assert(_root == snRunAccess());
+					assert(_root == snRunAccess("root"));
+					assert(_root == snRunAccess("r"));
+					assert(_root == snRunAccess("rasdfsdf2"));
+					assert(_root == snRunAccess("r3634t"));
+					assert(_root == snRunAccess(0));
+					assert(_root == snRunAccess(undefined));
+					assert(self.___devlocomotive_singletonTools_snHidden_accs_._prev == other);
+					assert(self.___devlocomotive_singletonTools_snHidden_accs_._temp._root == _root);
+					assert(self.___devlocomotive_singletonTools_snHidden_accs_._hook == _root);
+					assert(other == snRunAccess(-1));
+					assert(other == snRunAccess(-1, 1));
+					assert(self == snRunAccess(-1, 0));
+					assert(other == snRunAccess("p"));
+					assert(other == snRunAccess("p", 1));
+					assert(self == snRunAccess("p", 0));
+					assert(other == snRunAccess("pasdf"));
+					assert(other == snRunAccess("p23fqf", 1));
+					assert(self == snRunAccess("psf2", 0));
+					assert(_root == snRunAccess(1));
+					assert(_root == snRunAccess("hook"));
+					assert(_root == snRunAccess("h"));
+					assert(_root == snRunAccess("h23ffe23"));
+					assert(_root == snRunAccess("h23t223"));
+					assert(_root == snRunAccess(""));
+					assert(self == snRunAccess(-1, -1));
+					assert(self == snRunAccess(-1, -2));
+					assert(self == snRunAccess(-1, -3));
+					assert_equal(variable_struct_names_count(self), 2);
+					
+					//
+					assert_has_key(self, "_dx");
+					assert_equal(self._dx, 150);
+					
+					with snGroup("next") {
+						
+						//
+						snRunDefault("_dx", 200);
+						
+						//
+						assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
+						assert(is_snGroup(self));
+						
+						//
+						assert(_root == snRunAccess());
+						assert(_root == snRunAccess("root"));
+						assert(_root == snRunAccess("r"));
+						assert(_root == snRunAccess("rasdfsdf2"));
+						assert(_root == snRunAccess("r3634t"));
+						assert(_root == snRunAccess(0));
+						assert(_root == snRunAccess(undefined));
+						assert(self.___devlocomotive_singletonTools_snHidden_accs_._prev == other);
+						assert(self.___devlocomotive_singletonTools_snHidden_accs_._temp._root == _root);
+						assert(self.___devlocomotive_singletonTools_snHidden_accs_._hook == _root);
+						assert(other == snRunAccess(-1));
+						assert(other == snRunAccess(-1, 1));
+						assert(self == snRunAccess(-1, 0));
+						assert(other == snRunAccess("p"));
+						assert(other == snRunAccess("p", 1));
+						assert(self == snRunAccess("p", 0));
+						assert(other == snRunAccess("pasdf"));
+						assert(other == snRunAccess("p23fqf", 1));
+						assert(self == snRunAccess("psf2", 0));
+						assert(_root == snRunAccess(1));
+						assert(_root == snRunAccess("hook"));
+						assert(_root == snRunAccess("h"));
+						assert(_root == snRunAccess("h23ffe23"));
+						assert(_root == snRunAccess("h23t223"));
+						assert(_root == snRunAccess(""));
+						assert(self == snRunAccess(-1, -1));
+						assert(self == snRunAccess(-1, -2));
+						assert(self == snRunAccess(-1, -3));
+						assert_equal(variable_struct_names_count(self), 2);
+						
+						//
+						assert_has_key(self, "_dx");
+						assert_equal(self._dx, 150);
+						
+						//
+						with snGroup("next") {
+							
+							//
+							assert_has_key(self, "_dx");
+							assert_equal(self._dx, 200);
+						}
+					}
+					
+					//todo
+					
+				}
+			}
 		});
 		
 		//
@@ -349,7 +548,7 @@ if (test.current == test.main) {
 		assert(is_snGroup(self.stc));
 		
 		//
-		
+		groupDontHaveKeys(self.stc, "___devlocomotive_singletonTools_snHidden_accs_");
 		
 		//
 		variable_struct_remove(self, "stc");

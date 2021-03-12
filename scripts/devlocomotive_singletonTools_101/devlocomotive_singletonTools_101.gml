@@ -55,10 +55,10 @@ function snGroup() {
     var _group_new = new ___devlocomotive_singletonTools_snHidden_f_construct();
     if is_snGroup(self) and variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") { // if used <sn-interface> -> create access
     	var _target = self, _target_interface = _target.___devlocomotive_singletonTools_snHidden_accs_;
-    	var _size, _dlocal = _target_interface._defs, _dnames = variable_struct_get_names(_dlocal);
-    	_size = array_length(_dnames);
-    	if _size {
-    		var _i = -1, _value, _dkey, _defs_new = {};
+    	var _dlocal = _target_interface._defs, _defs_new = {};
+    	if variable_struct_names_count(_dlocal) {
+    		var _dnames = variable_struct_get_names(_dlocal), _size = array_length(_dnames);
+    		var _i = -1, _value, _dkey;
     		while (++_i < _size) {
     			_dkey = _dnames[_i];
     			_value = variable_struct_get(_dlocal, _dkey);
@@ -200,7 +200,7 @@ function snRunner() {
 			while (++_i < _size) {
 				_value = _temp_stack[_i];
 				_temp_stack_rmmv = variable_struct_get_names(_value._rmmv);
-				_subsize = array_length(_subsize);
+				_subsize = array_length(_temp_stack_rmmv);
 				if _subsize {
 					_j = -1;
 					_value = _value._self;
