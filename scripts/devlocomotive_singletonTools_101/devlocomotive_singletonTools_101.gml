@@ -1,10 +1,10 @@
 
 /* info
+	autor           \\ devlocomotive
     name            \\ singletonTools
     version         \\ 101
-    autor           \\ devlocomotive
     data-create     \\ 02.03.21
-    data-updata     \\ 11.03.21
+    data-updata     \\ 12.03.21
 */
 
 /* link
@@ -12,23 +12,25 @@
 */
 
 /* description
+	----
 	design tool for writing singletons
 	this tool hides some things, and does some routine (rather specific)
 	there is nothing new and special here
+	----
+	this thing is designed with a "wanna try to do this" effect, so it's probably completely useless
+	however, I still decided to bring it to mind
 */
 
 ///**************************************************************************///
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/* */
-
 // throw format "\n\tsingletonTools:\n\t" + message + "\n\n"
 
 /// @function snGroup([key], [(snRunner)-hook]);
 /// @description just:snGroup() -> creates an empty group (a regular structure created by another constructor)
 //				 just:snGroup("key") -> creates an empty group and sets it to the current structure with the key "key"
-//				 -- used <sn-interface> --
+//				 -- used <interface-sn-run> --
 //				 snGroup() -> snGroup()
 //				 snGroup("key") -> just:snGroup("key") -> generates access to groups above and inheritance of fields
 //				 snGroup("key", true) -> just:snGroup("key") -> the access field <hook> refers to the new group
@@ -94,7 +96,7 @@ function is_snGroup() {
 //				 snRunner(true, runner) -> will run the {runner} script from the <sn-interface> interface
 //				 -- additional argument --
 //				 snRunner(sn-interface, runner, "field") -> add to the global delete stack, a link to the specified "field"
-//				 snRunner(sn-interface, runner, method/function) -> will add to the global stack delete, the method referring to the singleton
+//				 snRunner(sn-interface, runner, method) -> will add to the global stack delete, the method referring to the singleton
 /// @param sn-interface {bool}
 /// @param runner       {method}
 /// @param [cleaner]    {method/string}
@@ -134,6 +136,9 @@ function snRunner() {
 	   	var _tempCoder =
 			{ _root : _singleton			//
 			, _mark : _tempSingleton._mark	//
+			// , _super : // for the future (?)
+			// 	{ _sppc : _tempSingleton._sppc
+			// 	}
 			} // data general for <interface-sn-code>
 		_singleton.___devlocomotive_singletonTools_snHidden_accs_ =
 			{ _id : [0, 0]					// unique id : [did, gid] - [did - depthIndex, gid - groupIndex]
@@ -147,7 +152,7 @@ function snRunner() {
 			} // data unique + open interface
 		if (is_numeric(argument[1]) and !script_exists(argument[1])) or !is_method(argument[1]) or !script_exists(method_get_index(argument[1]))
 			throw "\n\tsingletonTools:\n\tthe {runner} must be an existing function\n\n"; //
-		with _singleton method(_singleton, argument[1])(); // run {runner} with <sn-interface>
+		with _singleton method(_singleton, argument[1])(); // run {runner} with <interface-sn-run>
 		var _i, _size, _value;
 		// stage 0
 		_size = array_length(_temp_stack);
@@ -181,7 +186,7 @@ function snRunner() {
 				_target_interface = variable_struct_get(_ccid_pack.data_grp, "___devlocomotive_singletonTools_snHidden_code_");
 				_target_interface._spac = _ccid_pack._data_spc;
 				with _ccid_pack._data_spc method(_ccid_pack.data_grp, _ccid_pack._data_cod)(_ccid_pack._data_arg);
-				_target_interface._spac = undefined;
+				_target_interface._spac = undefined; // adherence to design
 			}
 			_size = array_length(_temp_stack_code); _i = -1;
 			while (++_i < _size) variable_struct_remove(_temp_stack_code[_i], "___devlocomotive_singletonTools_snHidden_code_");
@@ -205,12 +210,12 @@ function snRunner() {
 				}
 			}
 		}
-    } else with _singleton method(_singleton, argument[1])(); // run {runner} without <sn-interface>
+    } else with _singleton method(_singleton, argument[1])(); // run {runner} without <interface-sn-run>
 	return _singleton; // new singleton
 }
 
 /// @function snCleaner();
-/// @description snCleaner() -> will run methods and methods from fields
+/// @description snCleaner() -> will run methods and methods from fields (from ends work singleton's)
 /// @param <none> {none}
 /// @returns {void }
 function snCleaner() {
@@ -239,7 +244,8 @@ function snCleaner() {
 }
 
 /// @function snRunAccess([-1#previous;1#hook;default#root], [<previous>-level]);
-/// @description -- used <sn-interface> --
+/// @description gets the specified group
+//				 -- <interface-sn-run> --
 //				 snRunAccess(1) -> 'hook'
 //				 snRunAccess("h" + "..any..") -> 'hook'
 //				 snRunAccess(-1) -> 'previous'.level[1] (other)
@@ -249,8 +255,10 @@ function snCleaner() {
 //				 snRunAccess("p" + "..any..", n < 1) -> 'previous'.level[0] (self)
 //				 snRunAccess("p" + "..any..", n > 1) -> 'previous'.level[n]
 //				 () -> 'root'
+//				 -- other interface --
+//				 () -> error
 /// @param [-1#previous;1#hook;default#root] {number/string}
-/// @param [<previous>-level]				 {count}
+/// @param [<previous>-level]				 {number}
 /// @returns {snGroup}
 function snRunAccess() {
 	static ___devlocomotive_singletonTools_snHidden_f_getPrevious = method_get_index(function(_count) { // previous-level get
@@ -264,7 +272,7 @@ function snRunAccess() {
 		}
 		return self;
 	});
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // used only when using <sn-interface>
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
 		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
@@ -283,25 +291,29 @@ function snRunAccess() {
 }
 
 /// @function snRunDefault([key], [value]);
-/// @description independent for each group
-//			     -- used <sn-interface> --
+/// @description sets the value to all subsequent groups
+//				 inheritance is regulated before the creation of the group, 
+//				 and does not depend on the created groups and subgroups
+//				 -- <interface-sn-run> --
 //				 snRunDefault("key", value) -> set inheritance
 //				 snRunDefault("key") -> remove inheritance
-//				 snRunDefault() -> remove all inheritance
-/// @param [key]   {string} - check
+//				 () -> remove all inheritance
+//				 -- other interface --
+//				 () -> error
+/// @param [key]   {string} - at least one character and no use prefix '___devlocomotive_singletonTools_snHidden_'
 /// @param [value] {any}
 /// @returns {void }
 function snRunDefault() {
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // used only when using <sn-interface>
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
 		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
 	if (argument_count == 0) {
 		self.___devlocomotive_singletonTools_snHidden_accs_._defs = {}; // remove all value-default
 		exit;
 	}
 	if !is_string(argument[0]) or !string_length(argument[0])
-		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // check argument {key} is correct
+		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	if (string_pos("___devlocomotive_singletonTools_snHidden_", argument[0]) == 1) 
-		throw "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n"; // check exeption prefix '___devlocomotive_singletonTools_snHidden_'
+		throw "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n"; // checks that the prefix '___devlocomotive_singletonTools_snHidden_' is not used in the {key}
 	if (argument_count > 1)
 		variable_struct_set(self.___devlocomotive_singletonTools_snHidden_accs_._defs, argument[0], argument[1]); // set value-default
 	else {
@@ -312,29 +324,33 @@ function snRunDefault() {
 
 /// @function snRunMarker(key);
 /// @description marks the current group by giving it a quick name
+//				 will return either a method that generates an error, or a method that returns a group
+//				 -- <interface-sn-run> --
 //  			 -- group1 --
-//					-- no mark key --
-//					snRunMarker("key") -> mark key and get method -> error
-//					-- mark key --
-//					snRunMarker("key") -> get method -> error
+//					-- no mark key in group1 --
+//					snRunMarker("key") -> mark key -> return method-error
+//					-- mark key in group1 --
+//					snRunMarker("key") -> return method-error
 //				 -- group2 --
-//					-- mark key --
-//					snRunMarker("key") -> get method -> getter mark value
-/// @param key {string} - check
+//					-- mark key in other group --
+//					snRunMarker("key") -> return method-getter
+//				 -- other interface --
+//				 () -> error
+/// @param key {string} - at least one character
 /// @returns {method}
 function snRunMarker() {
 	static ___devlocomotive_singletonTools_snHidden_df_bunger = {
 		_bung : method_get_index(function() {
-			return self._value;	
+			return self._value;
 		}),
 		_error : method(undefined, function() {
-			throw "\n\tthe call, in this case, sets the value, not read it\n\n";	
+			throw "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n";
 		}),
 	}
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // used only when using <sn-interface>
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
 		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
 	if !is_string(argument0) or !string_length(argument0)
-		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // check argument {key} is correct
+		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	var _mark = self.___devlocomotive_singletonTools_snHidden_accs_._temp._mark;
 	if variable_struct_exists(_mark, argument0) {
 		var _bung = variable_struct_get(_mark, argument0);
@@ -345,15 +361,29 @@ function snRunMarker() {
 		return ___devlocomotive_singletonTools_snHidden_df_bunger._error; // design error
 	}
 }
-// TODO
+
 /// @function snRunCoder(level, spacename, methOrFunct, [argument]);
-/// @description 
+/// @description adds the following script to the stack for later execution
 //				 -- <interface-sn-run> --
-// stage - 9
+//				 snRunCoder(level, "spacename", function or method, ?argument) -> push to 'snRunCoder'.stack
+//				 -- other interface --
+//				 () -> error
+//		---------
+//		there are 4 levels of code stack sorting
+//		level -> depth -> group -> queue
+//		level - the level is determined by the argument
+//		depth - nesting depth of groups in each other
+//		group - subgroup numbers in the group (the sequence in which they were created)
+//		queue - moment adding to the stack
+//		spacename - provides access to a common empty group (generated automatically)
+//			allows you to combine code calls into a single structure (without manual intervention)
+//		argument - in addition, you can pass an argument to the function (I recommend not to use it, as this thing violates the design)
+//		---------
+// stage 1
 /// @param level       {number} - should be a number
 /// @param spacename   {string} - must have at least one character
 /// @param methOrFunct {method/function} - an existing function is required
-/// @param [argument]  {any} -
+/// @param [argument]  {any}
 /// @returns {void }
 function snRunCoder() {
 	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
@@ -383,7 +413,7 @@ function snRunCoder() {
 		, _data_spc : _spacename									// spacename - {spacename}
 		, _data_grp : _target										// group - 'self'
 		, _data_cod : argument[2]									// code - {methOrFunct}
-		, _data_arg : argument_count > 3 ? argument[3] : undefined	//
+		, _data_arg : argument_count > 3 ? argument[3] : undefined	// argument (it is bad)
 		}
 	array_push(_main_interface._ccid, _ccid); // add to the 'snRunCoder'.stack
 }
@@ -402,7 +432,7 @@ function snCodAccess() {
 	var _target_interface = undefined;
 	if variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_code_") {
 		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
-		is_undefined(_target_interface._spac) _target_interface = undefined;
+		if is_undefined(_target_interface._spac) _target_interface = undefined; // interface accessibility check (design adherence)
 	}
 	if is_undefined(_target_interface) // checks that the current interface is <interface-sn-code>
 		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
@@ -428,7 +458,7 @@ function snCodAccess() {
 //			    	snRCRemove("key") -> mark key
 //				 -- other interface --
 //				 () -> error
-// stage - 2
+//	stage 2
 /// @param key {string} - at least one character and no use prefix '___devlocomotive_singletonTools_snHidden_'
 /// @returns {void }
 function snRCRemove() {
@@ -437,7 +467,7 @@ function snRCRemove() {
 		_target_interface = self.___devlocomotive_singletonTools_snHidden_accs_;
 	else if variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_code_") {
 		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
-		if is_undefined(_target_interface._spac) _target_interface = undefined;
+		if is_undefined(_target_interface._spac) _target_interface = undefined; // interface accessibility check (design adherence)
 	}
 	if is_undefined(_target_interface)
 		throw "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n"; // checks that the current interface is <interface-sn-run> or <interface-sn-code>
@@ -445,14 +475,78 @@ function snRCRemove() {
 		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	if (string_pos("___devlocomotive_singletonTools_snHidden_", argument[0]) == 1)
 		throw "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n"; // checks that the prefix '___devlocomotive_singletonTools_snHidden_' is not used in the {key}
-	variable_struct_set(_target_interface._rmmv, argument[0], undefined); // marks the key
+	variable_struct_set(_target_interface._rmmv, argument[0], undefined); // marks this key
 }
 
-//
-function snExtend_fielder() {
+/// @function snCodMarkerGet(key);
+/// @description will return the marked group from 'snRunMarker'.map
+//				 -- <interface-sn-code> --
+//					-- no mark key in 'snRunMarker'.map --
+//					() -> error
+//					-- mark key in 'snRunMarker'.map --
+//					snCodMarkerGet("key") -> get group from 'snRunMarker'.map
+//				 -- other interface --
+//				 () -> error
+/// @param key {string} - at least one character
+/// @returns {snGroup}
+function snCodMarkerGet() {
+	var _target_interface = undefined;
+	if variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_code_") {
+		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
+		if is_undefined(_target_interface._spac) _target_interface = undefined; // interface accessibility check (design adherence)
+	}
+	if is_undefined(_target_interface) // checks that the current interface is <interface-sn-code>
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
+	if !is_string(argument0) or !string_length(argument0)
+		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
+	_target_interface = _target_interface._temp._mark;
+	if !variable_struct_exists(_target_interface, argument0)
+		throw "\n\tsingletonTools:\n\tthis {key} is not marked\n\n"; // check the existence of a {key} in the 'snRunMarker'.map
+	return variable_struct_get(_target_interface, argument0); // get group from 'snRunMarker'.map
+}
+
+/// @function snRunField_postMarker(key, newkey|[[fieldkey;newkey]...]);
+/// @description copy fields (level 100) - used snRunCoder
+//				 -- <interface-sn-run> --
+//				 snRunField_postMarker("key", "newkey") -> will launch snCodMarkerGet("key") and install the result with the "newkey" key
+//				 snRunField_postMarker("key", [["fieldkey", "newkey"]...]) -> will launch snCodMarkerGet("key") and will set fields with the "newkey" key by getting them using the "fieldkey" key
+//				 -- other interface --
+//				 () -> error
+//		---------
+//		all keys must have at least one character - [key, newkey, fieldkey]
+//		keys [key, fieldkey] must exist in the appropriate structures
+//		the "newkey" key can be overwritten
+//		---------
+//  stage 1 - level 100
+/// @param key {string}
+/// @param newkey|[[fieldkey;newkey]...]
+/// @returns {void }
+function snRunField_postMarker() {
 	static ___devlocomotive_singletonTools_snHidden_f_field = method_get_index(function(_reader) {
-		
+		var _group = snCodMarkerGet(_reader._key);
+		_reader = _reader._data;
+		if is_array(_reader) { // mode filed-set
+			var _size = array_length(_reader);
+			if _size {
+				var _i = -1, _value;
+				while (++_i < _size) {
+					_value = _reader[_i];
+					if !is_string(_value[0]) or !string_length(_value[0])
+						throw "\n\tsingletonTools:\n\tthe {fieldkey} must be a string and contain at least one character\n\n"; // checks that the {fieldkey} has at least one character
+					if !variable_struct_exists(_group, _value[0])
+						throw "\n\tsingletonTools:\n\tkey {fieldkey} does not exist in the group\n\n"; // check the existence of a {fieldkey} in the group - {key}
+					if !is_string(_value[1]) or !string_length(_value[1])
+						throw "\n\tsingletonTools:\n\tthe {newkey} must be a string and contain at least one character\n\n"; // checks that the {newkey} has at least one character
+					variable_struct_set(self, _value[1], variable_struct_get(_group, _value[0])); // set field from group - {key}
+				}
+			}
+		} else { // mode group-set
+			if !is_string(_reader) or !string_length(_reader)
+				throw "\n\tsingletonTools:\n\tthe {newkey} must be a string and contain at least one character\n\n"; // checks that the {newkey} has at least one character
+			variable_struct_set(self, _reader, _group); // set field with group
+		}
 	});
+	snRunCoder(100, "~", ___devlocomotive_singletonTools_snHidden_f_field, {_key : argument0, _data : argument1}); // push stack code
 }
 
 //////////////////////////////////////////////////////////////////////////////*/

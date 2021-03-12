@@ -5,7 +5,7 @@
     {"id":{"name":"init","path":"rooms/init/init.yy",},"order":0,},
     {"id":{"name":"tester","path":"scripts/tester/tester.yy",},"order":2,},
     {"id":{"name":"__GMA_BREAKPOINT__","path":"scripts/__GMA_BREAKPOINT__/__GMA_BREAKPOINT__.yy",},"order":0,},
-    {"id":{"name":"devlocomotive_singletonTools","path":"scripts/devlocomotive_singletonTools/devlocomotive_singletonTools.yy",},"order":0,},
+    {"id":{"name":"devlocomotive_singletonTools_101","path":"scripts/devlocomotive_singletonTools_101/devlocomotive_singletonTools_101.yy",},"order":0,},
   ],
   "Options": [
     {"name":"Linux","path":"options/linux/options_linux.yy",},
