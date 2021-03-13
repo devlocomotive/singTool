@@ -123,7 +123,7 @@ function snRunner() {
 	    _cleaner_data.___devlocomotive_singletonTools_snHidden_type_ = {_singleton : _singleton, _name : _cleaner}; // field cleaner
 	if variable_struct_names_count(_cleaner_data) snCleaner(_cleaner_data);
     if argument[0] {
-    	var _temp_stack = [];
+    	var _temp_stack = [_singleton];
     	var _temp_stack_ccid = [];
     	var _temp_stack_code = [];
 	    var _tempSingleton =			
@@ -244,25 +244,25 @@ function snCleaner() {
 	___devlocomotive_singletonTools_snHidden_d_stackCleaner = undefined; // clear 'stackCleaner'
 }
 
-/// @function snRunAccess([-1#previous;1#hook;default#root], [<previous>-level]);
+/// @function snRunAccess([-1#previous;1#hook;default#root], [<previous>-depth]);
 /// @description gets the specified group
 //				 -- <interface-sn-run> --
 //				 snRunAccess(1) -> 'hook'
 //				 snRunAccess("h" + "..any..") -> 'hook'
-//				 snRunAccess(-1) -> 'previous'.level[1] (other)
-//				 snRunAccess(-1, n < 1) -> 'previous'.level[0] (self)
-//				 snRunAccess(-1, n > 1) -> 'previous'.level[n]
-//  			 snRunAccess("p" + "..any..") -> 'previous'.level[1] (other)
-//				 snRunAccess("p" + "..any..", n < 1) -> 'previous'.level[0] (self)
-//				 snRunAccess("p" + "..any..", n > 1) -> 'previous'.level[n]
+//				 snRunAccess(-1) -> 'previous'.depth[1] (other)
+//				 snRunAccess(-1, n < 1) -> 'previous'.depth[0] (self)
+//				 snRunAccess(-1, n > 1) -> 'previous'.depth[n]
+//  			 snRunAccess("p" + "..any..") -> 'previous'.depth[1] (other)
+//				 snRunAccess("p" + "..any..", n < 1) -> 'previous'.depth[0] (self)
+//				 snRunAccess("p" + "..any..", n > 1) -> 'previous'.depth[n]
 //				 () -> 'root'
 //				 -- other interface --
 //				 () -> error
 /// @param [-1#previous;1#hook;default#root] {number/string}
-/// @param [<previous>-level]				 {number}
+/// @param [<previous>-depth]				 {number}
 /// @returns {snGroup}
 function snRunAccess() {
-	static ___devlocomotive_singletonTools_snHidden_f_getPrevious = method_get_index(function(_count) { // previous-level get
+	static ___devlocomotive_singletonTools_snHidden_f_getPrevious = method_get_index(function(_count) { // previous-depth get
 		if (_count >= 1) {
 			var _root_read = self.___devlocomotive_singletonTools_snHidden_accs_._prev;
 			repeat (_count - 1) {
@@ -279,12 +279,12 @@ function snRunAccess() {
 		if is_string(argument[0]) { // mode string
 			if string_length(argument[0]) {
 				argument[0] = string_char_at(argument[0], 1);
-				if (argument[0] == "p") return ___devlocomotive_singletonTools_snHidden_f_getPrevious(argument_count > 1 ? argument[1] : 1); // default 1 level
+				if (argument[0] == "p") return ___devlocomotive_singletonTools_snHidden_f_getPrevious(argument_count > 1 ? argument[1] : 1); // default 1 depth
 				if (argument[0] == "h") return self.___devlocomotive_singletonTools_snHidden_accs_._hook;
 			}
 		} else if is_numeric(argument[0]) { // mode number
 			argument[0] = sign(argument[0]);
-		    if (argument[0] == -1) return ___devlocomotive_singletonTools_snHidden_f_getPrevious(argument_count > 1 ? argument[1] : 1); // default 1 level
+		    if (argument[0] == -1) return ___devlocomotive_singletonTools_snHidden_f_getPrevious(argument_count > 1 ? argument[1] : 1); // default 1 depth
 		    if (argument[0] == 1)  return self.___devlocomotive_singletonTools_snHidden_accs_._hook;
 		}
 	}

@@ -25,7 +25,7 @@
 	function log() {
 		var str = "\t", i = 0;
 		repeat argument_count
-			str += string_replace_all(string_replace_all(argument[i++], "\n", "\\n"), "\t", "\\t") + (i < argument_count ? " " : "");
+			str += string_replace_all(string_replace_all(string(argument[i++]), "\n", "\\n"), "\t", "\\t") + (i < argument_count ? " " : "");
 		show_debug_message(str);
 	}
 	
@@ -73,17 +73,22 @@
 	}
 	
 	//
-	function groupDontHaveKeys(stcm, keys) {
+	function groupKeys_number(stcm, keys) {
 		if !is_array(keys) keys = [keys];
-		var marking = groupMarkirator(stcm), i = 0, j, stc;
+		var marking = groupMarkirator(stcm), i = 0, j, stc, ind = 0;
 		repeat array_length(marking) {
 			stc = marking[i++];
 			j = 0;
 			repeat array_length(keys) {
-				if variable_struct_exists(stc, keys[j++]) return false;
+				if variable_struct_exists(stc, keys[j++]) ind++;
 			}
 		}
-		return true;
+		return ind;
+	}
+	
+	//
+	function groupKeys_is(stcm, keys) {
+		return groupKeys_number(stcm, keys) > 0;
 	}
 	
 	//
@@ -131,8 +136,14 @@
 	}
 	
 	//
-	function gt(value) {
-		return value;
+	function poster(func, argm) {
+		if !is_array(argm) argm = [argm];
+		try {
+			script_execute_ext(func, argm);
+			return undefined;
+		} catch (e) {
+			return e;
+		}
 	}
 	
 #endregion
@@ -398,7 +409,13 @@ if (test.current == test.main) {
 			snRunDefault("_dx", 150);
 			
 			//
+			var _c2 = self;
+			
+			//
 			with snGroup("next2") {
+				
+				//
+				var _level_2_1 = self;
 				
 				//
 				assert_has_key(self, "___devlocomotive_singletonTools_snHidden_accs_");
@@ -441,6 +458,9 @@ if (test.current == test.main) {
 				assert_equal(self._dx, 150);
 				
 				//
+				var _c1 = self;
+				
+				//
 				with snGroup("next") {
 					
 					//
@@ -477,6 +497,10 @@ if (test.current == test.main) {
 					assert(self == snRunAccess(-1, -2));
 					assert(self == snRunAccess(-1, -3));
 					assert_equal(variable_struct_names_count(self), 2);
+					
+					//
+					assert(_root == snRunAccess(-1, 2));
+					assert(undefined == snRunAccess(-1, 3));
 					
 					//
 					assert_has_key(self, "_dx");
@@ -535,10 +559,263 @@ if (test.current == test.main) {
 						}
 					}
 					
-					//todo
+					//
+					assert(_c1 == snRunAccess(-1, 1));
+					assert(_c2 == snRunAccess(-1, 2));
+					assert(undefined == snRunAccess(-1, 3));
 					
+					//
+					var _c0 = self;
+					
+					//
+					with snGroup("next2") {
+						
+						//
+						assert_has_key(self, "_dx");
+						assert_equal(self._dx, 150);
+						
+						//
+						snRunDefault("_dx");
+						assert(_c0 == snRunAccess(-1, 1));
+						assert(_c1 == snRunAccess(-1, 2));
+						assert(undefined == snRunAccess(-1, 4));
+						
+						//
+						with snGroup("next") {
+							
+							//
+							assert_doesnt_have_key(self, "_dx");
+							assert(_c0 == snRunAccess("p", 2));
+							assert(other == snRunAccess("p", 1));
+							assert(_c0 == snRunAccess(-1, 2));
+							assert(_c1 == snRunAccess(-1, 3));
+							assert(_c2 == snRunAccess(-1, 4));
+							assert(_c2 == _root);
+							assert(_root == snRunAccess(-1, 4));
+							assert(undefined == snRunAccess(-1, 5));
+						}
+					}
+					
+					//
+					with snGroup("next3") {
+						
+						//
+						assert_has_key(self, "_dx");
+						assert_equal(self._dx, 150);
+						
+						//
+						assert(_c0 == snRunAccess(-1, 1));
+					}
+					
+					//
+					snRunDefault();
+					
+					//
+					with snGroup("next4") {
+						
+						//
+						assert_doesnt_have_key(self, "_dx");
+						
+						//
+						assert(_c0 == snRunAccess(-1, 1));
+					}
 				}
 			}
+			
+			//
+			snGroup("a");
+			assert_has_key(self, "next");
+			assert_has_key(self, "next2");
+			assert_has_key(self, "a");
+			assert_has_key(self.a, "_dx");
+			assert_equal(self.a._dx, 150);
+			
+			//
+			var _count = variable_struct_names_count(self);
+			var emp = snGroup();
+			with emp {
+				
+				//
+				var runInterface = "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+				var codInterface = "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
+				thrower(snRunAccess, [], runInterface);
+				thrower(snRunDefault, [], runInterface);
+				thrower(snRunCoder, [], runInterface);
+				thrower(snRunMarker, [], runInterface);
+				thrower(snRunField_postMarker, [], runInterface);
+				thrower(snCodAccess, [], codInterface);
+				thrower(snCodMarkerGet, [], codInterface);
+				thrower(snRCRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
+			}
+			var emp = {};
+			with emp {
+				
+				//
+				var runInterface = "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+				var codInterface = "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
+				thrower(snRunAccess, [], runInterface);
+				thrower(snRunDefault, [], runInterface);
+				thrower(snRunCoder, [], runInterface);
+				thrower(snRunMarker, [], runInterface);
+				thrower(snRunField_postMarker, [], runInterface);
+				thrower(snCodAccess, [], codInterface);
+				thrower(snCodMarkerGet, [], codInterface);
+				thrower(snRCRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
+			}
+			
+			//
+			assert_equal(_count, variable_struct_names_count(self));
+			
+			//
+			thrower(snGroup, "a", "\n\tsingletonTools:\n\tthe {key} is busy in current group\n\n");
+			thrower(snGroup, "a", "\n\tsingletonTools:\n\tthe {key} is busy in current group\n\n");
+			thrower(snGroup, "", "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snGroup, undefined, "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snGroup, [[]], "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			
+			//
+			with snGroup("b") {
+				
+				//
+				assert(other == snRunAccess("p"));
+				assert(_root == snRunAccess("h"));
+				
+				// 
+				assert_has_key(self, "_dx");
+				assert_equal(_dx, 150);
+				
+				//
+				snRunDefault();
+				
+				//
+				with snGroup("hook", true) {
+					
+					//
+					var _hook = self;
+					
+					//
+					assert_doesnt_have_key(self, "_dx");
+					snRunDefault("test", "yes!");
+					
+					//
+					assert(other == snRunAccess("p"));
+					assert(self == snRunAccess("h"));
+					
+					//
+					with snGroup("next") {
+						
+						//
+						assert_has_key(self, "test");
+						assert_doesnt_have_key(self, "_dx");
+						assert_equal(test, "yes!");
+						
+						//
+						assert(other == snRunAccess("p"));
+						assert(other == snRunAccess("h"));
+						assert(_hook == snRunAccess("h"));
+						
+						//
+						with snGroup("next") {
+							
+							//
+							assert(other == snRunAccess("p"));
+							assert(_hook == snRunAccess("h"));
+							
+							//
+							assert_has_key(self, "test");
+							assert_doesnt_have_key(self, "_dx");
+							assert_equal(test, "yes!");
+							
+							//
+							with snGroup("next", true) {
+								
+								//
+								var _hook2 = self;
+								
+								//
+								assert(other == snRunAccess("p"));
+								assert(self == snRunAccess("h"));
+								
+								//
+								assert_has_key(self, "test");
+								assert_doesnt_have_key(self, "_dx");
+								assert_equal(test, "yes!");
+								
+								//
+								with snGroup("next") {
+									
+									//
+									assert(other == snRunAccess("p"));
+									assert(other == snRunAccess("h"));
+									assert(_hook2 == snRunAccess("h"));
+									
+									//
+									assert_has_key(self, "test");
+									assert_doesnt_have_key(self, "_dx");
+									assert_equal(test, "yes!");
+									
+									//
+									with snGroup("next") {
+										
+										//
+										assert(other == snRunAccess("p"));
+										assert(_hook2 == snRunAccess("h"));
+										
+										//
+										assert_has_key(self, "test");
+										assert_doesnt_have_key(self, "_dx");
+										assert_equal(test, "yes!");
+										
+										//
+										assert(_root == snRunAccess("r"));
+										assert(_root == snRunAccess("p", 7));
+										assert(undefined == snRunAccess("p", 8));
+										
+										//
+										thrower(snRunAccess, [-1, 9], "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n");
+										thrower(snRunAccess, [-1, 10], "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n");
+									}
+								}
+								
+								//
+								assert(self == snRunAccess("h"));
+							}
+							
+							//
+							assert(_hook == snRunAccess("h"));
+							
+							//
+							with snGroup("next2") {
+								
+								//
+								assert(_root == snRunAccess("r"));
+								assert(other == snRunAccess("p"));
+								assert(_hook == snRunAccess("h"));
+								
+								//
+								assert_has_key(self, "test");
+								assert_doesnt_have_key(self, "_dx");
+								assert_equal(test, "yes!");
+								
+								//
+								assert(_root == snRunAccess("p", 5));
+								assert(undefined == snRunAccess("p", 6));
+								
+								//
+								thrower(snRunAccess, [-1, 7], "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n");
+								thrower(snRunAccess, [-1, 8], "\n\tsingletonTools:\n\tcannot rise higher than the root group\n\n");
+							}
+						}
+					}
+				}
+			}
+			
+			//
+			thrower(snRunDefault, "", "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snRunDefault, undefined, "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snRunDefault, [[]], "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snRunDefault, "___devlocomotive_singletonTools_snHidden_asdfsd", "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n");
+			thrower(snRunDefault, "___devlocomotive_singletonTools_snHidden_2323f2d32", "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n");
 		});
 		
 		//
@@ -548,7 +825,8 @@ if (test.current == test.main) {
 		assert(is_snGroup(self.stc));
 		
 		//
-		groupDontHaveKeys(self.stc, "___devlocomotive_singletonTools_snHidden_accs_");
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_accs_"));
+		assert_equal(groupKeys_number(self.stc, "_dx"), 8);
 		
 		//
 		variable_struct_remove(self, "stc");
@@ -556,6 +834,40 @@ if (test.current == test.main) {
 		
 	#endregion
 	
+	#region 4 snGroup-interface, snRunMarker, snRunField_postMarker + thrower
+		
+		//
+		log("section: 0-4");
+		
+		//
+		stc = snRunner(true, function() {
+			
+			//
+			log(" >> 1");
+			thrower(snRunMarker, "", "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snRunMarker, undefined, "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			
+			//
+			log(" >> 2");
+			unthrower(snRunMarker, "root");
+			unthrower(snRunMarker, "root");
+			
+			//
+			log(" >> 3");
+			assert(snRunMarker("root") == snRunMarker("root"));
+			
+			//
+			log(" >> 3.1");
+			thrower(snRunMarker("root"), []);
+			thrower(snRunMarker("root"), []);
+			log("'", poster(snRunMarker("root"), []).message, "'", "-> thrower is need modify");
+			thrower(method_get_index(snRunMarker("root")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+			
+			//
+			log(" >> 4");
+		});
+		
+	#endregion
 }
 #endregion
 
