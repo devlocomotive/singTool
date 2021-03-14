@@ -1,5 +1,22 @@
-// test for script-devlocomotive_singletonTools
+// test for script-devlocomotive_singletonTools_101
 //
+
+#region out
+
+	//
+	function const(value) {
+		return value;
+	}
+	
+	//
+	mt = function() { // 100003
+		log("HELLO!");
+	}
+	
+	//
+	const(100003)();
+	
+#endregion
 
 #region test controller
 	
@@ -144,6 +161,18 @@
 		} catch (e) {
 			return e;
 		}
+	}
+	
+	//
+	function gpush(n) {
+		if (n == global.___)
+			global.___ += 1;
+		else
+			throw "gpush error: at " + string(global.___) + " by " + string(n);
+	}
+	
+	function gclear() {
+		global.___ = 0;
 	}
 	
 #endregion
@@ -826,6 +855,7 @@ if (test.current == test.main) {
 		
 		//
 		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_accs_"));
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_code_"));
 		assert_equal(groupKeys_number(self.stc, "_dx"), 8);
 		
 		//
@@ -834,7 +864,7 @@ if (test.current == test.main) {
 		
 	#endregion
 	
-	#region 4 snGroup-interface, snRunMarker, snRunField_postMarker + thrower
+	#region 4 snGroup-interface, snRunMarker + thrower
 		
 		//
 		log("section: 0-4");
@@ -862,12 +892,462 @@ if (test.current == test.main) {
 			thrower(snRunMarker("root"), []);
 			log("'", poster(snRunMarker("root"), []).message, "'", "-> thrower is need modify");
 			thrower(method_get_index(snRunMarker("root")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+			thrower(method_get_index(snRunMarker("root")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+			thrower(method_get_index(snRunMarker("news")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
 			
 			//
 			log(" >> 4");
+			
+			//
+			with snGroup("next") {
+				
+				//
+				assert(other == snRunMarker("root")());
+				assert(other == snRunMarker("news")());
+				
+				//
+				thrower(method_get_index(snRunMarker("a")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+				thrower(method_get_index(snRunMarker("a")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+				thrower(method_get_index(snRunMarker("b")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+				thrower(method_get_index(snRunMarker("b")), [], "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n");
+			}
+			
+			//
+			assert(self.next == snRunMarker("a")());
+			assert(self.next == snRunMarker("b")());
 		});
 		
+		//
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_accs_"));
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_code_"));
+		
+		//
+		variable_struct_remove(self, "stc");
+		assert_doesnt_have_key(self, "stc");
+		
 	#endregion
+	
+	#region 5 snGroup-interface, snRunCoder, snCodAccess, (snRunMarker + snCodMarkerGet) + thrower (basic)
+	
+		//
+		log("section: 0-5");
+		
+		//
+		gclear();
+		
+		//
+		stc = snRunner(true, function() {
+			
+			//
+			global._root = self;
+			
+			//
+			log(" >> 1");
+			thrower(snRunCoder, ["", "", ""], "\n\tsingletonTools:\n\tthe{level} must be a number\n\n");
+			thrower(snRunCoder, [undefined, "", ""], "\n\tsingletonTools:\n\tthe{level} must be a number\n\n");
+			thrower(snRunCoder, [0, "", ""], "\n\tsingletonTools:\n\tthe {spacename} must be a string and contain at least one character\n\n");
+			thrower(snRunCoder, [0, undefined, ""], "\n\tsingletonTools:\n\tthe {spacename} must be a string and contain at least one character\n\n");
+			thrower(snRunCoder, [0, "space", ""], "\n\tsingletonTools:\n\tthe {methOrFunct} must be an existing function\n\n");
+			thrower(snRunCoder, [0, "space", -1], "\n\tsingletonTools:\n\tthe {methOrFunct} must be an existing function\n\n");
+			thrower(snRunCoder, [0, "space", method(undefined, -1)], "\n\tsingletonTools:\n\tthe {methOrFunct} must be an existing function\n\n");
+			
+			//
+			snRunMarker("root");
+			
+			//
+			log(" >> 2");
+			snRunCoder(0, "space", function() {
+				
+				//
+				log("code-2-1");
+				gpush(0);
+				
+				//
+				assert_equal(argument0, "auto");
+				assert(eqSpace(other, snCodAccess("s")));
+				assert(eqSpace(other, snCodAccess(1)));
+				self.hook = "hello yes";
+				other.hookOther = "invoke cast";
+				assert(snCodAccess(0) == global._root);
+				assert(snCodAccess() == global._root);
+				assert(snCodAccess(undefined) == global._root);
+				assert(snCodAccess("") == global._root);
+				
+				//
+				unthrower(snCodMarkerGet, "next");
+				assert(snCodMarkerGet("next") == global._next);
+			}, "auto");
+			snRunCoder(0, "space", function() {
+				
+				//
+				log("code-2-2");
+				gpush(1);
+				
+				//
+				assert_equal(argument0, "small");
+				assert_has_key(self, "hook");
+				assert_has_key(other, "hookOther");
+				assert_equal(self.hook, "hello yes");
+				assert_equal(other.hookOther, "invoke cast");
+				assert(eqSpace(other, snCodAccess(1)));
+				assert(snCodAccess(0) == global._root);
+				assert(snCodAccess() == global._root);
+				assert(snCodAccess(undefined) == global._root);
+				assert(snCodAccess("") == global._root);
+				
+				//
+				thrower(snCodMarkerGet, "", "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+				thrower(snCodMarkerGet, undefined, "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+				thrower(snCodMarkerGet, [[]], "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+				thrower(snCodMarkerGet, "gt", "\n\tsingletonTools:\n\tthis {key} is not marked\n\n");
+				
+				//
+				unthrower(snCodMarkerGet, "root");
+				assert(snCodMarkerGet("root") == global._root);
+			}, "small");
+			
+			//
+			log(" << 2");
+			log(" >> 3 - thrower");
+			
+			//
+			thrower(snCodAccess, [], "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n");
+			thrower(snCodMarkerGet, [], "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n");
+			
+			//
+			with snGroup("next") {
+				
+				//
+				global._next = self;
+				assert(snRunMarker("root")() == other);
+				snRunMarker("next");
+			}
+			
+			//
+			log("code is");
+		});
+		
+		//
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_accs_"));
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_code_"));
+		
+		//
+		variable_struct_remove(self, "stc");
+		assert_doesnt_have_key(self, "stc");
+		
+		//
+		gclear();
+		thrower(gpush, 1);
+		
+	#endregion
+	
+	#region 6 snGroup-interface, snRunCoder, (snRunMarker + snCodMarkerGet) + thrower
+		
+		//
+		log("section: 0-5");
+		
+		//
+		gclear();
+		
+		//
+		global._read = {};
+		stc = snRunner(true, function() {
+			
+			// levels: 20, -55, -1000, 0, -300 -> [-1000, -300, -55, 0, 20]
+			// count gpush 24 - [ -300,-55,20,-55,-55,-1000,20,20,20,0,-1000,-1000,-1000,-300,-55,0,-55,0,-55,0,-300,-55,-55,-1000 ]
+			// 0-4   -> 5-7  -> 8-15 -> 16-19 -> 20-23 -> 24-
+			// -1000 -> -300 -> -55  -> 0     -> 20    -> >20
+			
+			// >>>
+			// var list = [];
+			// repeat 24 array_push(list, choose(20, -55, -1000, 0, -300));
+			// show_debug_message(list);
+			// throw "check point";
+			// <<<
+			
+			//
+			snRunCoder(1, "test", function() {
+				
+				//
+				assert_has_key(other, "hook");
+				assert_equal(other.hook, "need more test");
+				
+				//
+				var runInterface = "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+				thrower(snRunAccess, [], runInterface);
+				thrower(snRunDefault, [], runInterface);
+				thrower(snRunCoder, [], runInterface);
+				thrower(snRunMarker, [], runInterface);
+				thrower(snRunField_postMarker, [], runInterface);
+			});
+			
+			//
+			snRunCoder(0, "test", function() {
+				
+				//
+				var _get;
+				
+				//
+				_get = snCodMarkerGet("root");
+				assert(_get == global._read.root);
+				assert(_get.mark == "root");
+				
+				//
+				_get = snCodMarkerGet("mark_one");
+				assert(_get == global._read.mark_one);
+				assert(_get.mark == "mark_one");
+				
+				//
+				_get = snCodMarkerGet("mark_two");
+				assert(_get == global._read.mark_two);
+				assert(_get.mark == "mark_two");
+				
+				//
+				_get = snCodMarkerGet("mark_three");
+				assert(_get == global._read.mark_three);
+				assert(_get.mark == "mark_three");
+				
+				//
+				_get = snCodMarkerGet("mark_four");
+				assert(_get == global._read.mark_four);
+				assert(_get.mark == "mark_four");
+				
+				//
+				_get = snCodMarkerGet("mark_five");
+				assert(_get == global._read.mark_five);
+				assert(_get.mark == "mark_five");
+				
+				//
+				other.hook = "need more test";
+			});
+			
+			//
+			self.mark = "root";
+			global._read.root = self;
+			snRunMarker("root");
+			
+			//
+			snRunCoder(-300, "test", gpush, 5);
+			
+			//
+			snRunCoder(5000, "test", function() {
+				assert_has_key(other, "space");
+				assert_equal(other.space, "this is test");
+				self.space = other;
+			});
+					
+			//
+			with snGroup("depth1_0") {
+				
+				//
+				snRunCoder(-55, "test", gpush, 10);
+				
+				//
+				with snGroup("depth2_0") {
+					
+					//
+					with snGroup("depth3_0") {
+						
+						//
+						snRunCoder(20, "test", gpush, 22);
+						snRunCoder(-55, "test", gpush, 14);
+						
+						//
+						snRunCoder(-5000, "test", function() {
+							other.space = "this is test";
+						});
+					}
+				}
+				
+				//
+				with snGroup("depth2_1") {
+					
+					//
+					with snGroup("depth3_0") {
+						
+						//
+						snRunCoder(-55, "test", gpush, 15);
+					}
+					
+					//
+					self.mark = "mark_one";
+					global._read.mark_one = self;
+					snRunMarker("mark_one");
+				}
+				
+				//
+				snRunCoder(-1000, "test", gpush, 1);
+			}
+			
+			//
+			with snGroup("depth1_1") {
+				
+				//
+				with snGroup("depth2_0") {
+					
+					//
+					snRunCoder(20, "test", gpush, 21);
+				}
+				
+				//
+				snRunCoder(20, "test", gpush, 20);
+				
+				//
+				with snGroup("depth2_1") {
+					
+					//
+					with snGroup("depth3_0") {
+						
+						//
+						self.mark = "mark_two";
+						global._read.mark_two = self;
+						snRunMarker("mark_two");
+						
+						//
+						with snGroup("depth4_0") {
+							
+							//
+							with snGroup("depth5_0") {
+								
+								//
+								snRunCoder(20, "test", gpush, 23);
+								
+								//
+								with snRunAccess("root") {
+									
+									//
+									snRunCoder(0, "test", gpush, 16);
+								}
+								
+								//
+								snRunCoder(-1000, "test", gpush, 4);
+								
+								//
+								self.mark = "mark_four";
+								global._read.mark_four = self;
+								snRunMarker("mark_four");
+							}
+						}
+						
+						//
+						snRunCoder(-1000, "test", gpush, 3);
+					}
+				}
+			}
+			
+			//
+			with snGroup("depth1_2") {
+				
+				//
+				with snGroup("depth2_0") {
+					
+					//
+					snRunCoder(-1000, "test", gpush, 2);
+				}
+				
+				//
+				with snGroup("depth2_1") {
+					
+					//
+					with snGroup("depth3_0") {
+						
+						//
+						snRunCoder(-300, "test", gpush, 6);
+					}
+				}
+				
+				//
+				snRunCoder(-55, "test", gpush, 12);
+			}
+			
+			//
+			with depth1_2 {
+				
+				//
+				snRunCoder(0, "test", gpush, 18);
+				
+				//
+				self.mark = "mark_three";
+				global._read.mark_three = self;
+				snRunMarker("mark_three");
+			}
+			
+			//
+			with depth1_0 {
+				
+				//
+				snRunCoder(-55, "test", gpush, 11);
+				
+				//
+				with depth2_1.depth3_0 {
+					
+					//
+					snRunCoder(0, "test", gpush, 19);
+				}
+				
+				//
+				with snRunAccess("root") {
+					
+					//
+					snRunCoder(-55, "test", gpush, 8);
+				}
+				
+				//
+				snRunCoder(0, "test", gpush, 17);
+			}
+			
+			//
+			with depth1_1 {
+				
+				//
+				with depth2_1.depth3_0.depth4_0 {
+					
+					//
+					snRunCoder(-300, "test", gpush, 7);
+				}
+				
+				//
+				with depth2_0 {
+					
+					//
+					snRunCoder(-55, "test", gpush, 13);
+					
+					//
+					self.mark = "mark_five";
+					global._read.mark_five = self;
+					snRunMarker("mark_five");
+				}
+			}
+			
+			//
+			snRunCoder(-55, "test", gpush, 9);
+			snRunCoder(-1000, "test", gpush, 0);
+			
+		});
+		
+		//
+		assert_has_key(self.stc, "space");
+		assert_equal(self.stc.space.hook, "need more test");
+		assert_equal(self.stc.space.space, "this is test");
+		
+		//
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_accs_"));
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_code_"));
+		
+		//
+		variable_struct_remove(self, "stc");
+		assert_doesnt_have_key(self, "stc");
+		
+	#endregion
+	
+	#region 7 snGroup-interface, snRCRemove, snRunField_postMarker + thrower
+	
+	#endregion
+	
+	#region 8
+	
+	#endregion
+	
 }
 #endregion
 
