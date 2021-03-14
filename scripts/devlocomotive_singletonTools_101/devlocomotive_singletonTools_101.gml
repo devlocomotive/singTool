@@ -4,7 +4,7 @@
     name            \\ singletonTools
     version         \\ 101
     data-create     \\ 02.03.21
-    data-updata     \\ 14.03.21
+    data-updata     \\ 12.03.21
 */
 
 /* link
@@ -151,7 +151,6 @@ function snRunner() {
 			, _rmmv : {}					// snRCRemove
 			, _temp : _tempSingleton		// 
 			} // data unique + open interface
-		// if is_method(argument[1]) argument[1] = method_get_index(argument[1]);
 		if (is_numeric(argument[1]) and !script_exists(argument[1])) or !is_method(argument[1]) or !script_exists(method_get_index(argument[1]))
 			throw "\n\tsingletonTools:\n\tthe {runner} must be an existing function\n\n"; //
 		with _singleton with _singleton method(undefined, argument[1])(); // run {runner} with <interface-sn-run>
@@ -182,13 +181,12 @@ function snRunner() {
 		if _size {
 			_i = -1;
 			array_sort(_temp_stack_ccid, ___devlocomotive_singletonTools_snHidden_f_sorting);
-			var _target_interface, _ccid_pack, _run_method;
+			var _target_interface, _ccid_pack;
 			while (++_i < _size) {
 				_ccid_pack = _temp_stack_ccid[_i];
-				_target_interface = variable_struct_get(_ccid_pack._data_grp, "___devlocomotive_singletonTools_snHidden_code_");
+				_target_interface = variable_struct_get(_ccid_pack.data_grp, "___devlocomotive_singletonTools_snHidden_code_");
 				_target_interface._spac = _ccid_pack._data_spc;
-				_run_method = _ccid_pack._data_cod;
-				with _ccid_pack._data_spc with _ccid_pack._data_grp _run_method(_ccid_pack._data_arg);
+				with _ccid_pack._data_spc method(_ccid_pack.data_grp, _ccid_pack._data_cod)(_ccid_pack._data_arg);
 				_target_interface._spac = undefined; // adherence to design
 			}
 			_size = array_length(_temp_stack_code); _i = -1;
@@ -395,11 +393,10 @@ function snRunCoder() {
 		throw "\n\tsingletonTools:\n\tthe{level} must be a number\n\n"; // check if the level is a number
 	if !is_string(argument[1]) or !string_length(argument[1])
 		throw "\n\tsingletonTools:\n\tthe {spacename} must be a string and contain at least one character\n\n"; // checks that the {spacename} has at least one character
-	if is_method(argument[2]) argument[2] = method_get_index(argument[2]);
-	if !is_numeric(argument[2]) or !script_exists(argument[2])
+	if (is_numeric(argument[2]) and !script_exists(argument[2])) or !is_method(argument[2]) or !script_exists(method_get_index(argument[2]))
 		throw "\n\tsingletonTools:\n\tthe {methOrFunct} must be an existing function\n\n"; // check if the function exists
-	var _target = self, _target_interface = _target.___devlocomotive_singletonTools_snHidden_accs_, _main_interface = _target_interface._temp; 
-	var _spacename = _main_interface._sppc, _id = string(argument[1]);
+	var _target = self, _target_interface = self.___devlocomotive_singletonTools_snHidden_accs_, _main_interface = _target_interface._temp; 
+	var _spacename = _main_interface._sppc, _id = string(argument[0]);
 	if variable_struct_exists(_spacename, _id)
 		_spacename = variable_struct_get(_spacename, _id); // get the existing space
 	else {
@@ -408,6 +405,7 @@ function snRunCoder() {
 	}
 	_id = _target_interface._id;
 	_target_interface._ccth = true;
+	if is_method(argument[2]) argument[2] = method_get_index(argument[2]);
 	var _ccid =
 		{ _lid : argument[0]                  						// level-id
 		, _did : _id[0]												// depth-id
@@ -421,15 +419,15 @@ function snRunCoder() {
 	array_push(_main_interface._ccid, _ccid); // add to the 'snRunCoder'.stack
 }
 
-/// @function snCodAccess([1#space;default#root]);
+/// @function snCodAccess([1#current;default#root]);
 /// @description gets the specified group
 //				 -- <interface-sn-code> --
 //				 snCodAccess(1) -> 'space'
-//				 snCodAccess("s" + "..any..") -> 'space'
+//				 snCodAccess("c" + "..any..") -> 'space'
 //				 () -> 'root'
 //				 -- other interface --
 //				 () -> error
-/// @param [1#space;default#root] {number/string}
+/// @param [1#current;default#root] {number/string}
 /// @returns {snGroup}
 function snCodAccess() {
 	var _target_interface = undefined;
@@ -443,11 +441,11 @@ function snCodAccess() {
 		if is_string(argument[0]) { // mode string
 			if string_length(argument[0]) {
 				argument[0] = string_char_at(argument[0], 1); // char-code
-				if (argument[0] == "s") return _target_interface._spac; // return 'space'
+				if (argument[0] == "c") return _target_interface._spac; // return 'space'
 			}
 		} else if is_numeric(argument[0]) { // mode number
 			argument[0] = sign(argument[0]); // number-code
-		    if (argument[0] == 1) return _target_interface._spac; // return 'space'
+		    if (argument[0] == 1)  return _target_interface._spac; // return 'space'
 		}
 	}
     return _target_interface._temp._root; // default return 'root'
