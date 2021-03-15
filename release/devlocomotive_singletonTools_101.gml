@@ -54,7 +54,7 @@ function snGroup() {
 	if (argument_count == 0)
 		return new ___devlocomotive_singletonTools_snHidden_f_construct(); // just return new group
 	else {
-		#args _key,
+		var _key = argument[0];
 		if !is_string(_key) or !string_length(_key)
 			throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	}
