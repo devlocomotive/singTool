@@ -14,7 +14,7 @@
 	}
 	
 	//
-	const(100003)();
+	// const(100003)();
 	
 #endregion
 
@@ -283,10 +283,10 @@ if (test.current == test.main) {
 		thrower(snRunDefault, [], runInterface);
 		thrower(snRunCoder, [], runInterface);
 		thrower(snRunMarker, [], runInterface);
-		thrower(snRunField_postMarker, [], runInterface);
+		thrower(snRunCoder_field, [], runInterface);
 		thrower(snCodAccess, [], codInterface);
 		thrower(snCodMarkerGet, [], codInterface);
-		thrower(snRCRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
+		thrower(snAftRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
 		
 		//
 		assert_has_key(self, "k");
@@ -310,10 +310,10 @@ if (test.current == test.main) {
 			thrower(snRunDefault, [], runInterface);
 			thrower(snRunCoder, [], runInterface);
 			thrower(snRunMarker, [], runInterface);
-			thrower(snRunField_postMarker, [], runInterface);
+			thrower(snRunCoder_field, [], runInterface);
 			thrower(snCodAccess, [], codInterface);
 			thrower(snCodMarkerGet, [], codInterface);
-			thrower(snRCRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
+			thrower(snAftRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
 			
 			//
 			other.hi = "hello";
@@ -671,10 +671,10 @@ if (test.current == test.main) {
 				thrower(snRunDefault, [], runInterface);
 				thrower(snRunCoder, [], runInterface);
 				thrower(snRunMarker, [], runInterface);
-				thrower(snRunField_postMarker, [], runInterface);
+				thrower(snRunCoder_field, [], runInterface);
 				thrower(snCodAccess, [], codInterface);
 				thrower(snCodMarkerGet, [], codInterface);
-				thrower(snRCRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
+				thrower(snAftRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
 			}
 			var emp = {};
 			with emp {
@@ -686,10 +686,10 @@ if (test.current == test.main) {
 				thrower(snRunDefault, [], runInterface);
 				thrower(snRunCoder, [], runInterface);
 				thrower(snRunMarker, [], runInterface);
-				thrower(snRunField_postMarker, [], runInterface);
+				thrower(snRunCoder_field, [], runInterface);
 				thrower(snCodAccess, [], codInterface);
 				thrower(snCodMarkerGet, [], codInterface);
-				thrower(snRCRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
+				thrower(snAftRemove, [], "\n\tsingletonTools:\n\tinterface <interface-sn-run> or interface <interface-sn-code> is not used\n\n");
 			}
 			
 			//
@@ -1044,7 +1044,7 @@ if (test.current == test.main) {
 	#region 6 snGroup-interface, snRunCoder, (snRunMarker + snCodMarkerGet) + thrower
 		
 		//
-		log("section: 0-5");
+		log("section: 0-6");
 		
 		//
 		gclear();
@@ -1078,7 +1078,7 @@ if (test.current == test.main) {
 				thrower(snRunDefault, [], runInterface);
 				thrower(snRunCoder, [], runInterface);
 				thrower(snRunMarker, [], runInterface);
-				thrower(snRunField_postMarker, [], runInterface);
+				thrower(snRunCoder_field, [], runInterface);
 			});
 			
 			//
@@ -1340,12 +1340,187 @@ if (test.current == test.main) {
 		
 	#endregion
 	
-	#region 7 snGroup-interface, snRCRemove, snRunField_postMarker + thrower
-	
+	#region 7 snGroup-interface, snAftRemove, (snRunCoder_field + (snRunMarker + snCodMarkerGet)) + thrower
+		
+		//
+		log("section: 0-7");
+		
+		//
+		stc = snRunner(true, function() {
+			
+			//	
+			snAftRemove("hello");
+			snAftRemove("empty");
+			snAftRemove("_before");
+			snAftRemove("_after");
+			
+			//
+			self.hello = "it is hello";
+			
+			//
+			snRunCoder_field("next", "key");
+			snRunCoder_field("next", [["fld_0", "fld0"], ["fld_1", "fld1"], ["fld_2", "fld2"]]);
+			
+			//
+			with snGroup("next") {
+				
+				//
+				with snGroup("next") {
+					
+					//
+					snRunMarker("next");
+					
+					//
+					self.key = 156;
+					
+					//
+					self.fld_0 = 0;
+					self.fld_1 = 1;
+					self.fld_2 = 2;
+					
+					//
+					snAftRemove("fld_2");
+				}
+				
+				//
+				snRunMarker("last");
+			}
+			
+			//
+			snRunCoder(0, "test", function() {
+				
+				//
+				self._after = "delete";
+				
+				//
+				snAftRemove("_del");
+			});
+			
+			//
+			self._del = "cast";
+			
+			//
+			with snGroup("cast") {
+				
+				//
+				snRunCoder_field("last", [["next", "next"]]);
+				
+				//
+				snRunCoder(0, "test", function() {
+					
+					//
+					assert_has_key(self, "next");
+					assert_equal(self.next.key, 156);
+					assert_equal(self.next.fld_0, 0);
+					assert_equal(self.next.fld_1, 1);
+					assert_equal(self.next.fld_2, 2);
+				});
+			}
+			
+			//
+			thrower(snAftRemove, "", "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snAftRemove, undefined, "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snAftRemove, [[]], "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n");
+			thrower(snAftRemove, "___devlocomotive_singletonTools_snHidden_sfd2", "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n");
+			thrower(snAftRemove, "___devlocomotive_singletonTools_snHidden_34r5h56hg2", "\n\tthe {key} should not use the prefix '___devlocomotive_singletonTools_snHidden_'\n\n");
+			
+			// thrower super-test (I really don't want to write tests, so we run each line independently)
+			// snRunCoder_field(""); // ->
+			// snRunCoder_field(undefined); // ->
+			// snRunCoder_field("last", ""); // ->
+			// snRunCoder_field("last", undefined); // ->
+			// snRunCoder_field("last", [["", "key"]]); // ->
+			// snRunCoder_field("last", [[undefined, "key"]]); // ->
+			// snRunCoder_field("last", [["hi", "key"]]); // ->
+			// snRunCoder_field("last", [["next", ""]]); // ->
+			// snRunCoder_field("last", [["next", undefined]]); // ->
+		});
+		
+		//
+		assert_doesnt_have_key(self.stc, "hello");
+		assert_doesnt_have_key(self.stc.next.next, "fld_2");
+		assert_has_key(self.stc, "key");
+		assert_has_key(self.stc, "fld0");
+		assert_has_key(self.stc, "fld1");
+		assert_has_key(self.stc, "fld2");
+		assert_equal(self.stc.key.key, 156);
+		assert_equal(self.stc.fld0, 0);
+		assert_equal(self.stc.fld1, 1);
+		assert_equal(self.stc.fld2, 2);
+		
+		
+		//
+		assert_doesnt_have_key(self, "empty");
+		assert_doesnt_have_key(self, "_before");
+		assert_doesnt_have_key(self, "_after");
+		assert_doesnt_have_key(self, "_del");
+		
+		//
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_accs_"));
+		assert_fail(groupKeys_is(self.stc, "___devlocomotive_singletonTools_snHidden_code_"));
+		
+		//
+		variable_struct_remove(self, "stc");
+		assert_doesnt_have_key(self, "stc");
+		
 	#endregion
 	
-	#region 8
-	
+	#region 8 snCleaner
+		
+		//
+		log("section: 0-8");
+		
+		//
+		gclear();
+		
+		//
+		snRunner(false, function() {
+			
+			//
+			self.clear = function() {
+				log("--clear0");
+				gpush(0);
+			}
+		}, "clear");
+		
+		//
+		snRunner(false, function() {
+			
+			//
+			self.clear = function() {
+				log("--clear1");
+				gpush(1);
+			}
+		}, "clear");
+		
+		//
+		snRunner(false, method_get_index(function() {
+			
+			//
+			self.clr = function() {
+				log("--clear2");
+				gpush(2);
+			}
+		}), "clr");
+		
+		//
+		snRunner(false, function() {
+		}, function() {
+			log("--clear3");
+			gpush(3);
+		});
+		
+		//
+		snRunner(false, function() {
+		}, method_get_index(function() {
+			log("--clear4");
+			gpush(4);
+		}));
+		
+		//
+		snCleaner();
+		gpush(5);
+		
 	#endregion
 	
 }
