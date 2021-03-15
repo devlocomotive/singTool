@@ -1457,6 +1457,13 @@ if (test.current == test.main) {
 		gclear();
 		
 		//
+		snRunner(true, function() {
+			
+			//
+			snRunCoder(-1, "-", log, "--tt");
+		});
+		
+		//
 		snRunner(false, function() {
 			
 			//
@@ -1501,8 +1508,36 @@ if (test.current == test.main) {
 		}));
 		
 		//
+		snRunner(false, function() {
+		}, function() {
+			log("--clear5");
+			gpush(5);
+		});
+		
+		//
+		snRunner(false, function() {
+		}, method_get_index(function() {
+			log("--clear6");
+			gpush(6);
+		}));
+		
+		//
+		snRunner(false, function() {
+			
+		}, -1);
+		
+		//
+		snRunner(false, function() {
+			
+		}, method(undefined, -1));
+		
+		//
 		snCleaner();
-		gpush(5);
+		gpush(7);
+		
+		//
+		thrower(snRunner, [false, -1, "\n\tsingletonTools:\n\tthe {runner} must be an existing function\n\n"]);
+		thrower(snRunner, [false, method(undefined, -1), "\n\tsingletonTools:\n\tthe {runner} must be an existing function\n\n"]);
 		
 		//
 		thrower(snCleaner, [], "\n\tsingletonTools:\n\tthe application is assumed to be complete\n\n");
@@ -1510,6 +1545,9 @@ if (test.current == test.main) {
 		
 	#endregion
 	
+	//
+	log();
+	log(">> end");
 }
 #endregion
 

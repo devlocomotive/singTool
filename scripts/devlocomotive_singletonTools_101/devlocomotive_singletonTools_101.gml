@@ -294,8 +294,8 @@ function snRunAccess() {
 		}
 		return self;
 	});
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
-		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_")
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n"; // checks that the current interface is <interface-sn-run>
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
 			if string_length(argument[0]) {
@@ -326,8 +326,8 @@ function snRunAccess() {
 /// @param [value] {any}
 /// @returns {void }
 function snRunDefault() {
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
-		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_")
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n"; // checks that the current interface is <interface-sn-run>
 	if (argument_count == 0) {
 		self.___devlocomotive_singletonTools_snHidden_accs_._defs = {}; // remove all value-default
 		exit;
@@ -366,11 +366,11 @@ function snRunMarker() {
 			return self._value;
 		}),
 		_error : method(undefined, function() {
-			throw "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n";
+			throw "\n\tsingletonTools:\n\tthe call, in this case, sets the value, not read it\n\n"; // design error
 		}),
 	}
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
-		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_")
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n"; // checks that the current interface is <interface-sn-run>
 	if !is_string(argument0) or !string_length(argument0)
 		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	var _mark = self.___devlocomotive_singletonTools_snHidden_accs_._temp._mark;
@@ -408,8 +408,8 @@ function snRunMarker() {
 /// @param [argument]  {any}
 /// @returns {void }
 function snRunCoder() {
-	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_") // checks that the current interface is <interface-sn-run>
-		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n";
+	if !variable_struct_exists(self, "___devlocomotive_singletonTools_snHidden_accs_")
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-run> interface is not used\n\n"; // checks that the current interface is <interface-sn-run>
 	if !is_numeric(argument[0])
 		throw "\n\tsingletonTools:\n\tthe{level} must be a number\n\n"; // check if the level is a number
 	if !is_string(argument[1]) or !string_length(argument[1])
@@ -460,7 +460,7 @@ function snRunCoder_field() {
 	static ___devlocomotive_singletonTools_snHidden_f_field = method_get_index(function(_reader) {
 		var _group = snCodMarkerGet(_reader._key);
 		_reader = _reader._data;
-		if is_array(_reader) { // mode filed-set
+		if is_array(_reader) { // mode field-set
 			var _size = array_length(_reader);
 			if _size {
 				var _i = -1, _value;
@@ -500,8 +500,8 @@ function snCodAccess() {
 		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
 		if is_undefined(_target_interface._spac) _target_interface = undefined; // interface accessibility check (design adherence)
 	}
-	if is_undefined(_target_interface) // checks that the current interface is <interface-sn-code>
-		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
+	if is_undefined(_target_interface)
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n"; // checks that the current interface is <interface-sn-code>
 	if (argument_count > 0) {
 		if is_string(argument[0]) { // mode string
 			if string_length(argument[0]) {
@@ -533,8 +533,8 @@ function snCodMarkerGet() {
 		_target_interface = self.___devlocomotive_singletonTools_snHidden_code_;
 		if is_undefined(_target_interface._spac) _target_interface = undefined; // interface accessibility check (design adherence)
 	}
-	if is_undefined(_target_interface) // checks that the current interface is <interface-sn-code>
-		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n";
+	if is_undefined(_target_interface)
+		throw "\n\tsingletonTools:\n\tthe <interface-sn-code> interface is not used\n\n"; // checks that the current interface is <interface-sn-code>
 	if !is_string(argument0) or !string_length(argument0)
 		throw "\n\tsingletonTools:\n\tthe {key} must be a string and contain at least one character\n\n"; // checks that the {key} has at least one character
 	_target_interface = _target_interface._temp._mark;
